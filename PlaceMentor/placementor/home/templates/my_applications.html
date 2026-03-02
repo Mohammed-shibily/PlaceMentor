@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <h2 class="fw-bold text-center mb-4">My Applications</h2>
+
+  {% if applications %}
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>Job Title</th>
+            <th>Company</th>
+            <th>Status</th>
+            <th>Applied On</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in applications %}
+            <tr>
+              <td>{{ app.job.title }}</td>
+              <td>{{ app.job.company }}</td>
+              <td>
+                <span class="badge 
+                  {% if app.status == 'Accepted' %} bg-success
+                  {% elif app.status == 'Rejected' %} bg-danger
+                  {% elif app.status == 'In Review' %} bg-warning
+                  {% else %} bg-secondary {% endif %}">
+                  {{ app.status }}
+                </span>
+              </td>
+              <td>{{ app.applied_on|date:"M d, Y H:i" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-center text-muted">You haven’t applied to any jobs yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

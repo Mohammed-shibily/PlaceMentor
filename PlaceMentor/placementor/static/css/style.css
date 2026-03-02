@@ -1,0 +1,5 @@
+.hero {
+  background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+              url('/static/images/placement.webp') center center/cover no-repeat;
+  height: 100vh;
+}

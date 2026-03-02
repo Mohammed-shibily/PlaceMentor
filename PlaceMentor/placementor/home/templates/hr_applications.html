@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Applications for Your Jobs</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: #f4f6f9;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    h2 {
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .table th {
+      background: #007bff;
+      color: white;
+    }
+    .status-select {
+      border-radius: 6px;
+      padding: 4px 8px;
+    }
+  </style>
+</head>
+<body>
+<div class="container mt-4">
+
+  <!-- Messages block -->
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h2><i class="fa-solid fa-users"></i> Applications for Your Jobs</h2>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Roll No</th>
+        <th>Branch</th>
+        <th>Job Title</th>
+        <th>Status</th>
+        <th>Applied On</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for app in applications %}
+      <tr>
+        <td>{{ app.student.user.get_full_name|default:app.student.user.username }}</td>
+        <td>{{ app.student.roll_no }}</td>
+        <td>{{ app.student.branch }}</td>
+        <td>{{ app.job.title }}</td>
+        <td>
+          <form method="post" action="{% url 'update_application_status' app.id %}">
+            {% csrf_token %}
+            <select name="status" class="form-select form-select-sm status-select">
+              <option value="Applied" {% if app.status == "Applied" %}selected{% endif %}>Applied</option>
+              <option value="Shortlisted" {% if app.status == "Shortlisted" %}selected{% endif %}>Shortlisted</option>
+              <option value="Selected" {% if app.status == "Selected" %}selected{% endif %}>Selected</option>
+              <option value="Rejected" {% if app.status == "Rejected" %}selected{% endif %}>Rejected</option>
+            </select>
+        </td>
+        <td>{{ app.applied_on|date:"M d, Y H:i" }}</td>
+        <td>
+            <button type="submit" class="btn btn-primary btn-sm">Update</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center">No applications found</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Bootstrap JS for dismissible alerts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
