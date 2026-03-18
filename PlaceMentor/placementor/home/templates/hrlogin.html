@@ -1,137 +1,52 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR Login | PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                  url("{% static 'images/hr.jpg' %}") no-repeat center center/cover;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+{% block title %}HR Login | PlaceMentor{% endblock %}
 
-    .login-card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 35px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      width: 100%;
-      max-width: 400px;
-      color: #fff;
-      text-align: center;
-      transition: transform 0.3s ease;
-    }
-    .login-card:hover {
-      transform: translateY(-5px);
-    }
+{% block content %}
+<div class="container py-5 animate__animated animate__zoomIn">
+  <div class="row justify-content-center">
+    <div class="col-md-5">
+      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg text-center">
+        <div class="logo-icon mx-auto mb-4 bg-gold-soft text-gold"
+          style="width: 60px; height: 60px; font-size: 1.5rem;">PC</div>
+        <h1 class="fw-bold text-light mb-1">HR <span class="text-gold">Login</span></h1>
+        <p class="text-muted mb-5">Access your recruitment command center.</p>
 
-    .login-card h3 {
-      font-weight: 600;
-      margin-bottom: 20px;
-    }
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-4 text-start">
+            <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
+            <input type="text" name="username"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3 font-outfit"
+              placeholder="Enter HR username" required>
+          </div>
+          <div class="mb-5 text-start">
+            <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
+            <input type="password" name="password"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" placeholder="••••••••"
+              required>
+          </div>
+          <button type="submit" class="btn btn-hr w-100 py-3 fw-bold fs-5">Login As HR</button>
 
-    .form-control {
-      border-radius: 10px;
-      padding: 12px;
-      border: none;
-      outline: none;
-      transition: 0.3s;
-    }
-    .form-control:focus {
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
-      transform: scale(1.02);
-    }
+          <div class="mt-4 text-muted small">
+            Don't have an HR account? <a href="{% url 'hrregister' %}" class="text-gold text-decoration-none">Register
+              here</a>
+          </div>
+        </form>
+      </div>
 
-    .btn-login {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-      color: #fff;
-      font-weight: 600;
-      border-radius: 30px;
-      padding: 12px;
-      border: none;
-      transition: 0.3s;
-    }
-    .btn-login:hover {
-      background: linear-gradient(135deg, #0056b3, #004080);
-      transform: scale(1.05);
-    }
-
-    .extra-links {
-      margin-top: 15px;
-      text-align: center;
-    }
-    .extra-links a {
-      color: #ffcc00;
-      font-weight: 500;
-      text-decoration: none;
-    }
-    .extra-links a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-
-<div class="login-card">
-  <!-- Branding -->
-  <div class="text-center mb-3">
-    <h3>HR Login</h3>
-  </div>
-
-  <!-- Form -->
-  <form method="POST">
-    {% csrf_token %}
-    
-    <div class="mb-3 text-start">
-      <label class="form-label">Username</label>
-      <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+      <div class="text-center mt-5">
+        <p class="text-muted small">Are you a student? <a href="{% url 'studlogin' %}"
+            class="text-teal text-decoration-none fw-bold">Student Login</a></p>
+      </div>
     </div>
-
-    <div class="mb-3 text-start">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" class="form-control" placeholder="Enter password" required>
-    </div>
-
-    <button type="submit" class="btn btn-login w-100">Login</button>
-  </form>
-
-  <!-- Centered Register Link -->
-  <div class="extra-links mt-3 text-center">
-    <a href="{% url 'hrregister' %}">Register</a>
   </div>
 </div>
 
-<!-- ✅ SweetAlert for Django messages -->
-{% if messages %}
-<script>
-  {% for message in messages %}
-    Swal.fire({
-      icon: "{% if 'success' in message.tags %}success{% elif 'error' in message.tags or 'danger' in message.tags %}error{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}",
-      title: "{{ message|escapejs }}",
-      showConfirmButton: true,
-      confirmButtonText: 'OK'
-    }).then((result) => {
-      {% if 'success' in message.tags %}
-        if (result.isConfirmed) {
-          window.location.href = "{% url 'hrdashboard' %}";
-        }
-      {% endif %}
-    });
-  {% endfor %}
-</script>
-{% endif %}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<style>
+  .bg-gold-soft {
+    background: rgba(245, 166, 35, 0.1);
+  }
+</style>
+{% endblock %}

@@ -5,10 +5,10 @@ from django.contrib.auth.models import User
 class StudentProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, null=True, blank=True)  
-    roll_no = models.CharField(max_length=20, unique=True)
+    college_name = models.CharField(max_length=200, blank=True)
     branch = models.CharField(max_length=100)
     phone = models.CharField(max_length=15, blank=True) 
-    cgpa = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
+    cgpa = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
     skills = models.TextField(help_text="Comma separated skills", blank=True)
     profile_completion = models.IntegerField(default=0)
 
@@ -29,6 +29,7 @@ class Interview(models.Model):
 class Notification(models.Model):
         student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
         message = models.CharField(max_length=255)
+        is_read = models.BooleanField(default=False)
         created_at = models.DateTimeField(auto_now_add=True)
 
         def __str__(self):
@@ -69,6 +70,8 @@ class Application(models.Model):
     STATUS_CHOICES = [
         ('Applied', 'Applied'),
         ('In Review', 'In Review'),
+        ('Shortlisted', 'Shortlisted'),
+        ('Selected', 'Selected'),
         ('Accepted', 'Accepted'),
         ('Rejected', 'Rejected'),
     ]
@@ -90,3 +93,15 @@ class ContactMessage(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.email}"
+
+
+class BookmarkedJob(models.Model):
+    student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE, related_name='bookmarks')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='bookmarked_by')
+    bookmarked_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('student', 'job')
+
+    def __str__(self):
+        return f"{self.student.user.username} bookmarked {self.job.title}"

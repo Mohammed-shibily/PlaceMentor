@@ -1,0 +1,14 @@
+id 6: 8 type: <class 'int'>
+id 7: 8 type: <class 'int'>
+id 8: 8.45 type: <class 'float'>
+id 9: 9 type: <class 'int'>
+id 10: 8 type: <class 'int'>
+id 11: 8 type: <class 'int'>
+id 13: 8 type: <class 'int'>
+id 14: 10 type: <class 'int'>
+id 15: 9 type: <class 'int'>
+id 16: 9 type: <class 'int'>
+id 17: 7 type: <class 'int'>
+id 18: 9 type: <class 'int'>
+id 19: 9 type: <class 'int'>
+id 20: 9.9 type: <class 'float'>

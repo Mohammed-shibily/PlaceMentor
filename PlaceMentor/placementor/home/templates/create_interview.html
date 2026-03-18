@@ -1,119 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Schedule Interview</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <style>
-    body {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #f0f4ff 0%, #dad1ff 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .glass-card {
-      background: rgba(255, 255, 255, 0.70);
-      border-radius: 2rem;
-      box-shadow: 0 6px 32px 0 rgba(82, 82, 152, 0.22), 0 1.5px 6px 0 rgba(100, 100, 200, 0.10);
-      border: 1px solid rgba(196, 205, 255, 0.18);
-      backdrop-filter: blur(8px) saturate(180%);
-      transition: box-shadow 0.3s;
-    }
-    .glass-card:hover {
-      box-shadow: 0 12px 44px 2px rgba(56, 71, 183, 0.18), 0 1.5px 8px 0 rgba(100, 100, 200, 0.17);
-    }
-    .glass-card input:focus, .glass-card input:active {
-      border-color: #3a6af0 !important;
-      box-shadow: 0 0 0 0.15rem rgba(58, 106, 240, 0.16);
-    }
-    .label-emoji {
-      font-size: 1.1em;
-      margin-right: 2px;
-    }
-    .student-info {
-      background: linear-gradient(90deg, #e8f0ff 83%, #dee6ff 100%);
-      border-left: 5px solid #3a6af0;
-      border-radius: 1.25rem;
-      box-shadow: 0 2px 8px 0 rgba(46, 99, 196, 0.06);
-    }
-    .btn-primary {
-      background: linear-gradient(90deg, #4468e2 40%, #a388f7 100%);
-      border: none;
-      font-weight: 600;
-      font-size: 17px;
-      letter-spacing: 0.5px;
-      transition: box-shadow 0.2s;
-    }
-    .btn-primary:hover {
-      box-shadow: 0 0 0.8rem #a388f7ab;
-      transform: scale(1.03);
-    }
-    @media (max-width: 600px) {
-      .glass-card {
-        padding: 1.5rem !important;
-        border-radius: 1rem !important;
-      }
-      .student-info {
-        font-size: 0.95em;
-        border-radius: 0.85rem;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="container min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="glass-card card border-0 shadow-lg p-5" style="max-width: 440px; width: 100%;">
-      <!-- Header -->
-      <div class="text-center mb-4">
-        <h2 class="fw-bold text-primary mb-1">
-          <i class="bi bi-calendar-check-fill"></i> Schedule Interview
-        </h2>
-        <p class="text-muted fs-6 mb-3">Set the interview details for the selected candidate.</p>
-      </div>
-      <!-- Student & Job Info -->
-      <div class="student-info p-3 mb-4">
-        <p class="mb-2">
-          <span class="label-emoji">👨‍🎓</span>
-          <strong>Student:</strong>
-          <span class="text-dark">
-            {{ application.student.user.get_full_name|default:application.student.user.username }}
-          </span>
-        </p>
-        <p class="mb-0">
-          <span class="label-emoji">💼</span>
-          <strong>Job:</strong>
-          {{ application.job.title }} at
-          <span class="text-primary fw-semibold">{{ application.job.company }}</span>
-        </p>
-      </div>
-      <!-- Form -->
-      <form method="post" autocomplete="off">
-        {% csrf_token %}
-        <div class="mb-3">
-          <label for="date" class="form-label fw-semibold text-dark">
-            <span class="label-emoji">📅</span> Interview Date &amp; Time
-          </label>
-          <input type="datetime-local" name="date" id="date" class="form-control border-primary rounded-3 shadow-sm" required>
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Schedule Interview | PlaceMentor{% endblock %}
+
+{% block content %}
+<div class="container py-5 animate__animated animate__fadeInUp">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
+        <div class="text-center mb-5">
+          <h1 class="display-6 fw-bold mb-3">Schedule <span class="text-gold">Interview</span></h1>
+          <p class="text-muted">Finalize details for the selected candidate.</p>
         </div>
-        <div class="mb-3">
-          <label for="location" class="form-label fw-semibold text-dark">
-            <span class="label-emoji">📍</span> Location
-          </label>
-          <input type="text" name="location" id="location" class="form-control border-primary rounded-3 shadow-sm"
-            placeholder="e.g. Zoom, Office, Google Meet" required>
+
+        <!-- Student & Job Snapshot -->
+        <div class="bg-dark p-4 rounded-4 mb-5 border border-secondary border-opacity-25">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-box me-3 fs-3 text-gold"><i class="fa-solid fa-user-graduate"></i></div>
+            <div>
+              <small class="text-muted d-block text-uppercase tracking-widest"
+                style="font-size: 0.65rem;">Candidate</small>
+              <span class="fw-bold text-light">{{
+                application.student.user.get_full_name|default:application.student.user.username }}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="icon-box me-3 fs-3 text-teal"><i class="fa-solid fa-briefcase"></i></div>
+            <div>
+              <small class="text-muted d-block text-uppercase tracking-widest"
+                style="font-size: 0.65rem;">Position</small>
+              <span class="fw-bold text-light">{{ application.job.title }}</span> <span
+                class="text-muted small">at</span> <span class="text-gold">{{ application.job.company }}</span>
+            </div>
+          </div>
         </div>
-        <div class="text-center mt-4">
-          <button type="submit" class="btn btn-primary px-5 py-2 rounded-pill shadow">
-            <i class="bi bi-check-circle-fill me-1"></i> Confirm &amp; Schedule
+
+        <form method="post" autocomplete="off">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label class="form-label text-muted small text-uppercase fw-bold">Date & Time</label>
+            <input type="datetime-local" name="date"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" required>
+          </div>
+          <div class="mb-5">
+            <label class="form-label text-muted small text-uppercase fw-bold">Location / Meeting Link</label>
+            <input type="text" name="location"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
+              placeholder="e.g. Zoom Link, Google Meet, or Office Block 4" required>
+          </div>
+
+          <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5">
+            <i class="fa-solid fa-calendar-check me-2"></i>Confirm Schedule
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   </div>
-</body>
-</html>
+</div>
+{% endblock %}

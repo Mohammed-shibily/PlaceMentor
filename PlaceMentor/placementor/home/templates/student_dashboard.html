@@ -1,344 +1,542 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Dashboard</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f4f6f9;
-      color: #212529 !important;
-    }
 
-    body, p, span, td, th, li, a, strong, h1, h2, h3, h4, h5, h6 {
-      color: #212529 !important;
-    }
+{% block title %}Student Dashboard | PlaceMentor{% endblock %}
 
-    /* Navbar */
-    .navbar {
-      background: linear-gradient(45deg, #007bff, #00c6ff);
-      padding: 12px 20px;
-    }
-    .navbar-brand,
-    .navbar .nav-link,
-    .navbar .navbar-right span {
-      color: #fff !important;
-    }
+{% block extra_css %}
+<style>
+  .dashboard-hero {
+    background: linear-gradient(135deg, rgba(10, 14, 26, 1) 0%, rgba(17, 24, 39, 1) 100%);
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(245, 166, 35, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
 
-    .logout-btn {
-      background: #fff;
-      color: #444 !important;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-      cursor: pointer;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .logout-btn:hover {
-      background: #f0f0f0;
-    }
+  .dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.05) 0%, transparent 70%);
+    z-index: 0;
+  }
 
-    .card {
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: transform 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-3px);
-    }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--gold), var(--teal));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--dark);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  }
 
-    .stats-card h3 {
-      font-weight: bold;
-      color: #007bff !important;
-    }
-    .stats-card p {
-      margin: 0;
-      color: #6c757d !important;
-    }
+  .glass-card {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
 
-    .skills span {
-      background: #007bff;
-      color: #fff !important;
-      border-radius: 20px;
-      padding: 5px 12px;
-      margin: 3px;
-      display: inline-block;
-      font-size: 0.85rem;
-    }
+  .glass-card:hover {
+    border-color: rgba(245, 166, 35, 0.3);
+    transform: translateY(-5px);
+  }
 
-    .progress-bar {
-      transition: width 1s ease-in-out;
-    }
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+  }
 
-    .nav-tabs .nav-link {
-      font-weight: 500;
-    }
-    .nav-tabs .nav-link i {
-      margin-right: 5px;
-    }
+  .bg-gold-soft {
+    background: rgba(245, 166, 35, 0.1);
+    color: var(--gold);
+  }
 
-    .table th {
-      background: #007bff;
-      color: #fff !important;
-    }
+  .bg-teal-soft {
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--teal-light);
+  }
 
-    .badge-status {
-      padding: 0.5em 0.7em;
-      border-radius: 8px;
-      color: #fff !important;
-    }
-    .badge-status.shortlisted { background: #17a2b8; }
-    .badge-status.applied { background: #6c757d; }
-    .badge-status.selected { background: #28a745; }
-    .badge-status.rejected { background: #dc3545; }
+  .bg-purple-soft {
+    background: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+  }
 
-    .recent-applications {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-    }
-    .recent-applications li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 6px 0;
-      border-bottom: 1px solid #eee;
-    }
-    .recent-applications li:last-child {
-      border-bottom: none;
-    }
-    .recent-applications .job {
-      font-weight: 500;
-    }
-    .recent-applications .date {
-      font-size: 0.85rem;
-      color: #6c757d;
-    }
+  .skill-tag {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    transition: all 0.3s ease;
+  }
 
-    .timeline {
-      list-style: none;
-      padding-left: 0;
-      position: relative;
-    }
-    .timeline li {
-      padding: 10px 15px;
-      margin-bottom: 10px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      position: relative;
-    }
-    .timeline li::before {
-      content: "•";
-      color: #007bff;
-      font-weight: bold;
-      position: absolute;
-      left: -15px;
-      top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg shadow-sm">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#"><i class="fa-solid fa-briefcase"></i> Placement Cell</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
+  .skill-tag:hover {
+    background: rgba(245, 166, 35, 0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .activity-row {
+    border-radius: 12px;
+    transition: background 0.2s;
+    margin-bottom: 8px;
+  }
+
+  .activity-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .status-applied {
+    background: rgba(148, 163, 184, 0.1);
+    color: #ffffff;
+  }
+
+  .status-selected {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate__animated animate__fadeIn">
+
+  <!-- Premium Header Section -->
+  <div class="dashboard-hero d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-4">
+      <div class="profile-avatar">
+        {{ profile.user.username|slice:":1"|upper }}
+      </div>
+      <div class="text-center text-md-start">
+        <h1 class="h2 fw-bold text-white mb-1">Hello, {{ profile.user.username }}!</h1>
+        <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+          <span class="badge bg-gold-soft">{{ profile.branch }}</span>
+          <span class="text-gold opacity-50">•</span>
+          <span>{{ profile.college_name }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="mt-4 mt-md-0 d-flex gap-2 flex-wrap">
+      <button class="btn btn-student px-4 py-2 rounded-pill shadow-lg" data-bs-toggle="modal"
+        data-bs-target="#editProfileModal">
+        <i class="fa-solid fa-user-pen me-2"></i>Edit Profile
       </button>
-      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-        <ul class="navbar-nav align-items-center">
-          <li class="nav-item me-3 text-white">
-            <i class="fa-regular fa-user"></i> Hi, {{ user.username }}
-          </li>
-          <li class="nav-item">
-            <a href="{% url 'view_jobs' %}" class="nav-link text-white"><i class="fa-solid fa-briefcase"></i> Jobs</a>
-          </li>
-          <li class="nav-item ms-2">
-            <a href="{% url 'logout' %}" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container mt-4">
-    <!-- Stats Row -->
-    <div class="row g-3">
-      <div class="col-md-3">
-        <div class="card text-center p-3 stats-card">
-          <i class="fa-solid fa-file-lines fa-2x text-primary mb-2"></i>
-          <h3>{{ total_apps }}</h3>
-          <p>Applications</p>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center p-3 stats-card">
-          <i class="fa-solid fa-calendar-check fa-2x text-success mb-2"></i>
-          <h3>{{ total_interviews }}</h3>
-          <p>Interviews</p>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center p-3 stats-card">
-          <i class="fa-solid fa-handshake fa-2x text-warning mb-2"></i>
-          <h3>{{ total_offers }}</h3>
-          <p>Offers</p>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card text-center p-3 stats-card">
-          <i class="fa-solid fa-graduation-cap fa-2x text-danger mb-2"></i>
-          <h3>{{ profile.cgpa|default:"-" }}</h3>
-          <p>CGPA</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabs -->
-    <ul class="nav nav-tabs mt-4" id="dashboardTabs" role="tablist">
-      <li class="nav-item">
-        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button"><i class="fa-solid fa-chart-pie"></i> Overview</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" id="applications-tab" data-bs-toggle="tab" data-bs-target="#applications" type="button"><i class="fa-solid fa-briefcase"></i> Applications</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"><i class="fa-solid fa-id-card"></i> Profile</button>
-      </li>
-    </ul>
-
-    <div class="tab-content mt-3">
-      <!-- Overview Tab -->
-      <div class="tab-pane fade show active" id="overview">
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card p-3 mb-3">
-              <h5><i class="fa-solid fa-clock-rotate-left text-primary"></i> Recent Applications</h5>
-              <ul class="recent-applications">
-                {% for app in applications %}
-                  <li>
-                    <span class="job">{{ app.job.title }}</span>
-                    <span class="badge-status {{ app.status|lower }}">{{ app.status }}</span>
-                    <span class="date">{{ app.applied_on|date:"M d, Y" }}</span>
-                  </li>
-                {% empty %}
-                  <li>No recent applications</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card p-3 mb-3">
-              <h5><i class="fa-solid fa-calendar-days text-success"></i> Upcoming Interviews</h5>
-              <ul>
-                {% for interview in interviews %}
-                  <li>{{ interview.application.job.title }} - {{ interview.date|date:"M d, Y H:i" }}</li>
-                {% empty %}
-                  <li>No upcoming interviews</li>
-                {% endfor %}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Applications Tab -->
-      <div class="tab-pane fade" id="applications">
-        <div class="card p-3">
-          <h5><i class="fa-solid fa-list-check text-primary"></i> All Applications</h5>
-          <table class="table table-bordered table-striped mt-2">
-            <thead>
-              <tr>
-                <th>Company</th>
-                <th>Position</th>
-                <th>Status</th>
-                <th>Applied On</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for app in applications %}
-              <tr>
-                <td>{{ app.job.company }}</td>
-                <td>{{ app.position }}</td>
-                <td><span class="badge-status {{ app.status|lower }}">{{ app.status }}</span></td>
-                <td>{{ app.applied_on|date:"M d, Y" }}</td>
-              </tr>
-              {% empty %}
-              <tr>
-                <td colspan="4" class="text-center">No applications found</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Profile Tab -->
-      <div class="tab-pane fade" id="profile">
-        <div class="card p-3">
-          <h5><i class="fa-solid fa-user-graduate text-primary"></i> Student Profile</h5>
-          <p><strong><i class="fa-solid fa-user"></i> Name:</strong> {{ profile.user.get_full_name|default:profile.user.username }}</p>
-          <p><strong><i class="fa-solid fa-id-badge"></i> Roll No:</strong> {{ profile.roll_no }}</p>
-          <p><strong><i class="fa-solid fa-book-open"></i> Branch:</strong> {{ profile.branch }}</p>
-          <p><strong><i class="fa-solid fa-phone"></i> Phone:</strong> {{ profile.phone|default:"-" }}</p>
-          <p><strong><i class="fa-solid fa-star"></i> CGPA:</strong> {{ profile.cgpa|default:"-" }}</p>
-          <div class="skills">
-            <strong><i class="fa-solid fa-code"></i> Skills:</strong><br>
-            {% for skill in profile.skill_list %}
-              <span>{{ skill }}</span>
-            {% empty %}
-              <span>No skills added</span>
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Notifications -->
-    <div class="card p-3 mt-4">
-      <h5><i class="fa-solid fa-bell text-warning"></i> Notifications</h5>
-      <ul class="timeline mt-3">
-        {% for note in notifications %}
-          <li>{{ note.message }}</li>
-        {% empty %}
-          <li>No notifications</li>
-        {% endfor %}
-      </ul>
+      <button class="btn btn-outline-light px-4 py-2 rounded-pill" data-bs-toggle="modal"
+        data-bs-target="#changePasswordModal" style="border-color: rgba(255,255,255,.15); font-size: .85rem;">
+        <i class="fa-solid fa-key me-2"></i>Change Password
+      </button>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- SweetAlert2 -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <!-- Django messages -->
-  {% if messages %}
-    {% for message in messages %}
-      <script>
-        Swal.fire({
-          toast: true,
-          position: 'top-end',
-          icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' or message.tags == 'danger' %}error{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}",
-          title: "{{ message|escapejs }}",
-          showConfirmButton: false,
-          timer: 3000,
-          timerProgressBar: true,
-          didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-          }
-        });
-      </script>
-    {% endfor %}
+  <!-- Profile Completion Bar -->
+  {% if profile.profile_completion < 100 %}
+  <div class="mt-3 p-3 rounded-4" style="background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="text-white-50 small fw-bold text-uppercase" style="letter-spacing:.08em; font-size:.7rem;">
+        <i class="fa-solid fa-chart-pie text-gold me-1"></i> Profile Completion
+      </span>
+      <span class="text-gold fw-bold" style="font-size:.85rem;">{{ profile.profile_completion }}%</span>
+    </div>
+    <div class="progress rounded-pill" style="height: 6px; background: rgba(255,255,255,.05);">
+      <div class="progress-bar rounded-pill" role="progressbar"
+        style="width: {{ profile.profile_completion }}%; background: linear-gradient(90deg, #d4af37, #f5d060);"
+        aria-valuenow="{{ profile.profile_completion }}" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+  </div>
   {% endif %}
-</body>
-</html>
+
+  <!-- Quick Stats -->
+  <div class="row g-4 mb-5">
+    <div class="col-6 col-md-3">
+      <div class="glass-card p-4 text-center">
+        <div class="stat-icon bg-gold-soft mx-auto"><i class="fa-solid fa-briefcase"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ total_apps }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Applied</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card p-4 text-center">
+        <div class="stat-icon bg-teal-soft mx-auto"><i class="fa-solid fa-calendar-check"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ total_interviews }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Interviews</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card p-4 text-center">
+        <div class="stat-icon bg-purple-soft mx-auto"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ profile.cgpa|default:"0.00" }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">CGPA</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="glass-card p-4 text-center">
+        <div class="stat-icon bg-gold-soft mx-auto" style="background: rgba(245, 166, 35, 0.05);"><i
+            class="fa-solid fa-bolt"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ profile.skill_list|length }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Skills</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Expertise Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h5 class="fw-bold text-white mb-0">My Expertize</h5>
+          <i class="fa-solid fa-code text-gold"></i>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          {% for skill in profile.skill_list %}
+          <span class="skill-tag">
+            <i class="fa-solid fa-check-circle text-teal me-1 small"></i>{{ skill }}
+          </span>
+          {% empty %}
+          <p class="text-white-50 small italic">Click 'Edit Profile' to add your skills.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Notifications Card -->
+    <div class="col-lg-6">
+      <div class="glass-card p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+          <h5 class="fw-bold text-white mb-0">
+            <i class="fa-solid fa-bell me-2 text-gold"></i>Pulse Alerts
+          </h5>
+          <a href="{% url 'notifications' %}" class="badge bg-danger rounded-pill text-decoration-none" style="font-size:.75rem;">
+            {{ notifications|length }} new
+          </a>
+        </div>
+        <div class="notification-feed">
+          {% for note in notifications|slice:":4" %}
+          <div class="d-flex gap-3 mb-3 pb-3" style="border-bottom: 1px solid rgba(255,255,255,.05);">
+            <div class="flex-shrink-0">
+              {% if "🚀" in note.message or "🏆" in note.message or "🎉" in note.message %}
+              <div class="p-2 rounded-circle d-flex align-items-center justify-content-center"
+                style="width:36px;height:36px;background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.25);">
+                <i class="fa-solid fa-trophy small" style="color:#10b981;"></i>
+              </div>
+              {% elif "📋" in note.message %}
+              <div class="p-2 rounded-circle d-flex align-items-center justify-content-center"
+                style="width:36px;height:36px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.2);">
+                <i class="fa-solid fa-clipboard small" style="color:#f87171;"></i>
+              </div>
+              {% elif "🔍" in note.message %}
+              <div class="p-2 rounded-circle d-flex align-items-center justify-content-center"
+                style="width:36px;height:36px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.2);">
+                <i class="fa-solid fa-search small" style="color:#2dd4bf;"></i>
+              </div>
+              {% else %}
+              <div class="bg-gold-soft p-2 rounded-circle d-flex align-items-center justify-content-center"
+                style="width:36px;height:36px;border:1px solid rgba(212,175,55,.2);">
+                <i class="fa-solid fa-bell-ring small text-gold"></i>
+              </div>
+              {% endif %}
+            </div>
+            <div class="flex-grow-1 overflow-hidden">
+              <p class="text-white small mb-1 fw-semibold" style="line-height:1.4;">{{ note.message|truncatechars:80 }}</p>
+              <span class="text-white-50" style="font-size: 0.68rem;">
+                <i class="fa-regular fa-clock me-1"></i>{{ note.created_at|timesince }} ago
+              </span>
+            </div>
+            {% if not note.is_read %}
+            <div class="flex-shrink-0 pt-1">
+              <span style="width:7px;height:7px;background:#d4af37;border-radius:50%;display:inline-block;box-shadow:0 0 6px #d4af37;"></span>
+            </div>
+            {% endif %}
+          </div>
+          {% empty %}
+          <div class="text-center py-4 text-white-50">
+            <i class="fa-solid fa-mug-hot mb-2 d-block" style="font-size:1.5rem;"></i>
+            <span class="small">All caught up!</span>
+          </div>
+          {% endfor %}
+          {% if notifications %}
+          <div class="text-center mt-2">
+            <a href="{% url 'notifications' %}" class="small text-gold text-decoration-none fw-bold">
+              View All Notifications <i class="fa-solid fa-arrow-right ms-1"></i>
+            </a>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Profile Modal (Redesigned) -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content glass-card border-0 shadow-2xl">
+      <div class="modal-header border-white border-opacity-5 p-4">
+        <h5 class="modal-title fw-bold text-white d-flex align-items-center gap-2">
+          <i class="fa-solid fa-user-gear text-gold"></i> Update Profile
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form action="{% url 'edit_profile' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body p-4">
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Phone Number</label>
+            <input type="text" name="phone" value="{{ profile.phone }}" class="form-control py-3">
+          </div>
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">College Name</label>
+            <input type="text" name="college_name" value="{{ profile.college_name }}" class="form-control py-3">
+          </div>
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest">Branch</label>
+              <input type="text" name="branch" value="{{ profile.branch }}" class="form-control py-3">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest">CGPA</label>
+              <input type="number" step="0.01" name="cgpa" value="{{ profile.cgpa }}" class="form-control py-3">
+            </div>
+          </div>
+          <div class="mb-0">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Skills</label>
+            <textarea name="skills" rows="3" class="form-control py-3"
+              placeholder="Python, Django, React...">{{ profile.skills }}</textarea>
+            <div class="form-text text-white-50 small">Separate skills with commas.</div>
+          </div>
+        </div>
+        <div class="p-4 pt-0">
+          <button type="submit" class="btn btn-student w-100 py-3 fw-bold rounded-pill">Update Academic Profile</button>
+          <button type="button" class="btn btn-link text-muted w-100 mt-2 small text-decoration-none"
+            data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-dark2 border border-secondary border-opacity-10 rounded-4 overflow-hidden">
+      <div class="p-4 pb-3 border-bottom border-secondary border-opacity-10">
+        <h5 class="fw-bold text-gold mb-0"><i class="fa-solid fa-shield-halved me-2"></i>Change Password</h5>
+      </div>
+      <form method="POST" action="{% url 'change_password' %}">
+        {% csrf_token %}
+        <div class="p-4">
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Current Password</label>
+            <input type="password" name="current_password" class="form-control py-3" required>
+          </div>
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">New Password</label>
+            <input type="password" name="new_password" class="form-control py-3" minlength="8" required>
+          </div>
+          <div class="mb-0">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Confirm New Password</label>
+            <input type="password" name="confirm_password" class="form-control py-3" minlength="8" required>
+          </div>
+        </div>
+        <div class="p-4 pt-0">
+          <button type="submit" class="btn btn-student w-100 py-3 fw-bold rounded-pill">Update Password</button>
+          <button type="button" class="btn btn-link text-muted w-100 mt-2 small text-decoration-none"
+            data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════  NEW JOB ALERT POPUP  ═══════ -->
+{% if job_alerts %}
+<div class="job-alert-overlay" id="jobAlertOverlay">
+  <div class="job-alert-popup animate__animated animate__zoomIn">
+    <!-- Close button -->
+    <button class="job-alert-close" id="jobAlertClose" title="Dismiss">&times;</button>
+
+    <!-- Header -->
+    <div class="job-alert-header">
+      <div class="job-alert-icon-wrap">
+        <i class="fa-solid fa-rocket"></i>
+      </div>
+      <h4>🚀 New Job Alerts!</h4>
+      <p>{{ job_alerts|length }} new job{{ job_alerts|length|pluralize }} just posted. Don't miss out!</p>
+    </div>
+
+    <!-- Alert list -->
+    <div class="job-alert-body">
+      {% for alert in job_alerts %}
+      <div class="job-alert-item">
+        <div class="job-alert-dot"></div>
+        <div>
+          <p class="job-alert-msg">{{ alert.message }}</p>
+          <span class="job-alert-time"><i class="fa-regular fa-clock"></i> {{ alert.created_at|timesince }} ago</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Footer -->
+    <div class="job-alert-footer">
+      <a href="{% url 'view_jobs' %}" class="btn btn-student rounded-pill px-4 py-2 fw-bold w-100">
+        <i class="fa-solid fa-briefcase me-2"></i>View Available Jobs
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* ── Alert Popup Overlay ── */
+  .job-alert-overlay {
+    position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,.6); backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; animation: fadeInOverlay .4s ease forwards;
+  }
+  @keyframes fadeInOverlay { to { opacity: 1; } }
+
+  /* ── Popup Card ── */
+  .job-alert-popup {
+    position: relative;
+    background: linear-gradient(160deg, rgba(17,24,39,.98), rgba(10,14,26,.98));
+    border: 1px solid rgba(212,175,55,.25);
+    border-radius: 24px;
+    width: 90%; max-width: 460px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 40px rgba(212,175,55,.08);
+    overflow: hidden;
+  }
+
+  .job-alert-close {
+    position: absolute; top: 16px; right: 18px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+    color: #9ca3af; font-size: 1.4rem; width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px; cursor: pointer; transition: all .2s; z-index: 2;
+  }
+  .job-alert-close:hover { background: rgba(239,68,68,.15); color: #f87171; border-color: rgba(239,68,68,.3); }
+
+  /* ── Header ── */
+  .job-alert-header {
+    text-align: center; padding: 32px 28px 20px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(212,175,55,.1) 0%, transparent 75%);
+  }
+  .job-alert-icon-wrap {
+    width: 64px; height: 64px; margin: 0 auto 16px;
+    background: linear-gradient(135deg, rgba(212,175,55,.2), rgba(245,208,96,.1));
+    border: 1px solid rgba(212,175,55,.3);
+    border-radius: 18px; display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; color: #f5d060;
+    animation: rocketBounce 2s ease-in-out infinite;
+  }
+  @keyframes rocketBounce {
+    0%,100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+  }
+  .job-alert-header h4 {
+    font-size: 1.4rem; font-weight: 800; color: #f0f4ff; margin-bottom: 6px;
+  }
+  .job-alert-header p {
+    font-size: .85rem; color: #9ca3af; margin: 0;
+  }
+
+  /* ── Body ── */
+  .job-alert-body {
+    padding: 0 24px 4px; max-height: 220px; overflow-y: auto;
+  }
+  .job-alert-body::-webkit-scrollbar { width: 5px; }
+  .job-alert-body::-webkit-scrollbar-thumb { background: rgba(212,175,55,.3); border-radius: 10px; }
+
+  .job-alert-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,.04);
+  }
+  .job-alert-item:last-child { border-bottom: none; }
+
+  .job-alert-dot {
+    flex-shrink: 0; width: 10px; height: 10px; margin-top: 5px;
+    background: #d4af37; border-radius: 50%;
+    box-shadow: 0 0 8px rgba(212,175,55,.6);
+    animation: dotPulse 2s ease-in-out infinite;
+  }
+  @keyframes dotPulse {
+    0%,100% { box-shadow: 0 0 4px rgba(212,175,55,.4); }
+    50% { box-shadow: 0 0 12px rgba(212,175,55,.8); }
+  }
+
+  .job-alert-msg {
+    font-size: .82rem; color: #e5e7eb; line-height: 1.5; margin: 0 0 4px;
+  }
+  .job-alert-time {
+    font-size: .68rem; color: #6b7280;
+  }
+
+  /* ── Footer ── */
+  .job-alert-footer {
+    padding: 16px 24px 24px;
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const overlay = document.getElementById('jobAlertOverlay');
+  const closeBtn = document.getElementById('jobAlertClose');
+  if (!overlay) return;
+
+  function dismissAlerts() {
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity .3s';
+    setTimeout(() => overlay.remove(), 300);
+
+    // AJAX: mark job alerts as read
+    fetch('{% url "dismiss_job_alerts" %}', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}',
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }).catch(err => console.log('dismiss error', err));
+  }
+
+  closeBtn.addEventListener('click', dismissAlerts);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) dismissAlerts();
+  });
+});
+</script>
+{% endif %}
+
+{% endblock %}

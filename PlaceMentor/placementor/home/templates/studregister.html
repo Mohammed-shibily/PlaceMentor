@@ -1,113 +1,97 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Registration - PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: url("{% static 'images/placement.webp' %}") no-repeat center center/cover;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      backdrop-filter: blur(5px);
-    }
-    .register-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 15px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-      padding: 30px;
-      width: 100%;
-      max-width: 500px;
-    }
-    .form-control:focus {
-      border-color: #007bff;
-      box-shadow: 0 0 8px rgba(0,123,255,0.3);
-    }
-  </style>
-</head>
-<body>
 
-<div class="register-card">
-  <h2 class="text-center mb-3 text-primary">Student Registration</h2>
+{% block title %}Student Registration | PlaceMentor{% endblock %}
 
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% block content %}
+<div class="container py-5 animate__animated animate__zoomIn">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
+        <div class="text-center mb-5">
+          <div class="logo-icon mx-auto mb-4" style="width: 50px; height: 50px; font-size: 1.2rem;">PC</div>
+          <h1 class="fw-bold text-light mb-1">Student <span class="text-gold">Registration</span></h1>
+          <p class="text-muted">Join the elite recruitment network of Excellence College.</p>
+        </div>
+
+        <form method="POST" action="{% url 'studregister' %}">
+          {% csrf_token %}
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
+              <input type="text" name="username"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ username|default:'' }}" placeholder="Choose a username" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
+              <input type="email" name="email"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ email|default:'' }}" placeholder="Enter your email" required>
+            </div>
+          </div>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">College Name</label>
+              <input type="text" name="college_name"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ college_name|default:'' }}" placeholder="e.g. Excellence College of Engineering" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Branch</label>
+              <input type="text" name="branch"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ branch|default:'' }}" placeholder="e.g. Computer Science" required>
+            </div>
+          </div>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Current CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" name="cgpa"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ cgpa|default:'' }}" placeholder="0.0 - 10.0" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Phone Number</label>
+              <input type="text" name="phone"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ phone|default:'' }}" placeholder="10-digit number" required>
+            </div>
+          </div>
+
+          <div class="mb-4 text-start">
+            <label class="form-label text-muted small text-uppercase fw-bold">Key Skills (Comma separated)</label>
+            <input type="text" name="skills"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+              value="{{ skills|default:'' }}" placeholder="e.g. Python, Django, React, SQL" required>
+          </div>
+
+          <div class="row g-4 mb-5">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
+              <input type="password" name="password"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                placeholder="Min. 8 characters" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Confirm Password</label>
+              <input type="password" name="password2"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                placeholder="Repeat password" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5 mb-4">Create My Profile</button>
+
+          <div class="text-center text-muted small">
+            Already have an account? <a href="{% url 'studlogin' %}" class="text-gold text-decoration-none">Login
+              here</a>
+          </div>
+        </form>
       </div>
-    {% endfor %}
-  {% endif %}
-
-  <form method="POST" action="{% url 'studregister' %}">
-    {% csrf_token %}
-
-    <div class="mb-3">
-      <label for="username" class="form-label">Username</label>
-      <input type="text" class="form-control" id="username" name="username"
-             value="{{ username|default:'' }}" placeholder="Enter your username" required>
     </div>
-
-    <div class="mb-3">
-      <label for="email" class="form-label">Email Address</label>
-      <input type="email" class="form-control" id="email" name="email"
-             value="{{ email|default:'' }}" placeholder="Enter your email" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="roll_no" class="form-label">Roll Number</label>
-      <input type="text" class="form-control" id="roll_no" name="roll_no"
-             value="{{ roll_no|default:'' }}" placeholder="Enter your roll number" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="branch" class="form-label">Branch</label>
-      <input type="text" class="form-control" id="branch" name="branch"
-             value="{{ branch|default:'' }}" placeholder="Enter your branch" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="cgpa" class="form-label">CGPA</label>
-      <input type="number" step="0.01" min="0" max="10" class="form-control"
-             id="cgpa" name="cgpa" value="{{ cgpa|default:'' }}" placeholder="Enter your CGPA" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="phone" class="form-label">Phone Number</label>
-      <input type="text" class="form-control" id="phone" name="phone"
-             value="{{ phone|default:'' }}" placeholder="Enter your phone number" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="skills" class="form-label">Skills</label>
-      <input type="text" class="form-control" id="skills" name="skills"
-             value="{{ skills|default:'' }}" placeholder="Enter your skills (comma separated)" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="password" class="form-label">Password</label>
-      <input type="password" class="form-control" id="password" name="password"
-             placeholder="Create a password" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="password2" class="form-label">Confirm Password</label>
-      <input type="password" class="form-control" id="password2" name="password2"
-             placeholder="Confirm your password" required>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Register</button>
-  </form>
-
-  <p class="text-center mt-3">Already registered?
-    <a href="{% url 'studlogin' %}" class="text-decoration-none">Login here</a>
-  </p>
+  </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

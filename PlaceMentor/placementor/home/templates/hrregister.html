@@ -1,156 +1,89 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR Registration | PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
-                  url("{% static 'images/hr.jpg' %}") no-repeat center center/cover;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+{% block title %}HR Registration | PlaceMentor{% endblock %}
 
-    .register-card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 35px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
-      width: 100%;
-      max-width: 480px;
-      color: #fff;
-      transition: transform 0.3s ease;
-    }
-    .register-card:hover {
-      transform: translateY(-5px);
-    }
+{% block content %}
+<div class="container py-5 animate__animated animate__zoomIn">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
+        <div class="text-center mb-5">
+          <div class="logo-icon mx-auto mb-4 bg-gold-soft text-gold"
+            style="width: 50px; height: 50px; font-size: 1.2rem;">PC</div>
+          <h1 class="fw-bold text-light mb-1">HR <span class="text-gold">Registration</span></h1>
+          <p class="text-muted">Start hiring the best talent from Excellence College.</p>
+        </div>
 
-    .register-card h3 {
-      font-weight: 600;
-      color: #fff;
-      text-align: center;
-      margin-bottom: 20px;
-    }
+        <form method="POST">
+          {% csrf_token %}
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Full Name</label>
+              <input type="text" name="fullname"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ fullname|default:'' }}" placeholder="Recruiter Name" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Company Name</label>
+              <input type="text" name="company"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ company|default:'' }}" placeholder="e.g. Google, Microsoft" required>
+            </div>
+          </div>
 
-    .form-control {
-      border-radius: 10px;
-      padding: 12px;
-      border: none;
-      outline: none;
-      transition: 0.3s;
-    }
-    .form-control:focus {
-      box-shadow: 0 0 8px rgba(0, 123, 255, 0.8);
-      transform: scale(1.02);
-    }
+          <div class="row g-4 mb-4">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Official Email</label>
+              <input type="email" name="email"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ email|default:'' }}" placeholder="hr@company.com" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Contact Number</label>
+              <input type="text" name="phone"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                value="{{ phone|default:'' }}" placeholder="Phone number" required>
+            </div>
+          </div>
 
-    .btn-register {
-      background: linear-gradient(135deg, #28a745, #218838);
-      color: #fff;
-      font-weight: 600;
-      border-radius: 30px;
-      padding: 12px;
-      transition: 0.3s;
-      border: none;
-    }
-    .btn-register:hover {
-      background: linear-gradient(135deg, #218838, #1e7e34);
-      transform: scale(1.05);
-    }
+          <div class="mb-4 text-start">
+            <label class="form-label text-muted small text-uppercase fw-bold">Choose Username</label>
+            <input type="text" name="username"
+              class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+              value="{{ username|default:'' }}" placeholder="Username for login" required>
+          </div>
 
-    .form-label {
-      font-weight: 500;
-      color: #eaeaea;
-    }
+          <div class="row g-4 mb-5">
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
+              <input type="password" name="password"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                placeholder="Min. 8 characters" required>
+            </div>
+            <div class="col-md-6 text-start">
+              <label class="form-label text-muted small text-uppercase fw-bold">Confirm Password</label>
+              <input type="password" name="password2"
+                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
+                placeholder="Repeat password" required>
+            </div>
+          </div>
 
-    .login-link {
-      color: #ffcc00;
-      font-weight: 600;
-      text-decoration: none;
-    }
-    .login-link:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
+          <button type="submit" class="btn btn-hr w-100 py-3 fw-bold fs-5 mb-4">Register As Recruiter</button>
 
-<div class="register-card">
-  <h3>HR Registration</h3>
-  <form method="POST">
-    {% csrf_token %}
-
-    <div class="mb-3">
-      <label class="form-label">Full Name</label>
-      <input type="text" name="fullname" class="form-control" placeholder="Enter your name" 
-             value="{{ fullname|default:'' }}" required>
+          <div class="text-center text-muted small">
+            Already have an HR account? <a href="{% url 'hrlogin' %}" class="text-gold text-decoration-none">Login
+              here</a>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <div class="mb-3">
-      <label class="form-label">Company Name</label>
-      <input type="text" name="company" class="form-control" placeholder="Enter company name" 
-             value="{{ company|default:'' }}" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control" placeholder="Enter email" 
-             value="{{ email|default:'' }}" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Phone</label>
-      <input type="text" name="phone" class="form-control" placeholder="Enter phone number" 
-             value="{{ phone|default:'' }}" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input type="text" name="username" class="form-control" placeholder="Choose a username" 
-             value="{{ username|default:'' }}" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" name="password" class="form-control" placeholder="Create password" required>
-    </div>
-
-    <div class="mb-3">
-      <label class="form-label">Confirm Password</label>
-      <input type="password" name="password2" class="form-control" placeholder="Confirm password" required>
-    </div>
-
-    <button type="submit" class="btn btn-register w-100">Register</button>
-  </form>
-
-  <p class="mt-3 text-center small">
-    Already have an account? 
-    <a href="{% url 'hrlogin' %}" class="login-link">Login here</a>
-  </p>
+  </div>
 </div>
 
-<!-- ✅ SweetAlert for Django messages -->
-{% if messages %}
-<script>
-  {% for message in messages %}
-    Swal.fire({
-      icon: "{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}error{% else %}info{% endif %}",
-      title: "{{ message|escapejs }}"
-    });
-  {% endfor %}
-</script>
-{% endif %}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<style>
+  .bg-gold-soft {
+    background: rgba(245, 166, 35, 0.1);
+  }
+</style>
+{% endblock %}

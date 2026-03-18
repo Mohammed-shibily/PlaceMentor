@@ -24,8 +24,8 @@ class JobAdmin(admin.ModelAdmin):
 # Register other models normally
 @admin.register(StudentProfile)
 class StudentProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'roll_no', 'branch', 'cgpa')
-    search_fields = ('user__username', 'roll_no', 'branch')
+    list_display = ('user', 'college_name', 'branch', 'cgpa')
+    search_fields = ('user__username', 'college_name', 'branch')
 
 
 @admin.register(Application)

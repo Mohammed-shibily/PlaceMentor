@@ -1,0 +1,23 @@
+Traceback (most recent call last):
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\placementor\check_django.py", line 12, in <module>
+    list(StudentProfile.objects.all())
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\.venv\Lib\site-packages\django\db\models\query.py", line 390, in __iter__
+    self._fetch_all()
+    ~~~~~~~~~~~~~~~^^
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\.venv\Lib\site-packages\django\db\models\query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\.venv\Lib\site-packages\django\db\models\query.py", line 127, in __iter__
+    for row in compiler.results_iter(results):
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\.venv\Lib\site-packages\django\db\models\sql\compiler.py", line 1542, in apply_converters
+    value = converter(value, expression, connection)
+  File "C:\Users\user\OneDrive\Desktop\PlaceMentor\PlaceMentor\.venv\Lib\site-packages\django\db\backends\sqlite3\operations.py", line 334, in converter
+    return create_decimal(value).quantize(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        quantize_value, context=expression.output_field.context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+decimal.InvalidOperation: [<class 'decimal.InvalidOperation'>]

@@ -1,36 +1,604 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apply for Job | PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f5f5f5; font-family: 'Poppins', sans-serif; }
-    .apply-card { max-width: 600px; margin: 50px auto; border-radius: 12px; }
-  </style>
-</head>
-<body>
 
-<div class="container">
-  <div class="card apply-card shadow p-4">
-    <h3 class="fw-bold text-center mb-3">Apply for {{ job.title }}</h3>
-    <p><strong>Company:</strong> {{ job.company }}</p>
-    <p><strong>Description:</strong> {{ job.description }}</p>
-    <p><strong>Eligibility:</strong> CGPA ≥ {{ job.eligibility_cgpa }}</p>
-    <p><strong>Skills:</strong> {{ job.skills_required|default:"Not specified" }}</p>
-    <p><strong>Last Date:</strong> {{ job.last_date|date:"M d, Y" }}</p>
+{% block title %}Apply for {{ job.title }} | PlaceMentor{% endblock %}
 
-    <!-- ✅ FIX: add action with job.id -->
-    <form method="post" action="{% url 'apply_job' job.id %}">
-  {% csrf_token %}
-  <button type="submit" class="btn btn-primary">Confirm Apply</button>
-</form>
+{% block extra_css %}
+<style>
+  /* ── Page background ── */
+  .apply-page {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(20, 184, 166, .08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(212, 175, 55, .06) 0%, transparent 55%);
+    padding: 40px 0 80px;
+  }
 
-    <a href="{% url 'view_jobs' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+  /* ── Split layout ── */
+  .apply-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  /* ── Job detail card (left) ── */
+  .job-info-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .015));
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 24px;
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+  }
+
+  .job-info-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(130deg, rgba(20, 184, 166, .12) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .job-info-card .glow-line {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #14b8a6 40%, #d4af37 60%, transparent);
+  }
+
+  /* ── Company badge ── */
+  .company-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(20, 184, 166, .1);
+    border: 1px solid rgba(20, 184, 166, .25);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: .78rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #14b8a6;
+    margin-bottom: 20px;
+  }
+
+  .job-title-text {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: #f0f4ff;
+    margin-bottom: 8px;
+  }
+
+  .job-title-text span {
+    background: linear-gradient(90deg, #d4af37, #f5d060);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .job-company-text {
+    color: #7a8394;
+    font-size: .95rem;
+    margin-bottom: 36px;
+  }
+
+  /* ── Detail rows ── */
+  .detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .05);
+  }
+
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+
+  .detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .detail-icon.teal {
+    background: rgba(20, 184, 166, .12);
+    color: #14b8a6;
+  }
+
+  .detail-icon.gold {
+    background: rgba(212, 175, 55, .12);
+    color: #d4af37;
+  }
+
+  .detail-icon.green {
+    background: rgba(52, 211, 153, .12);
+    color: #34d399;
+  }
+
+  .detail-icon.red {
+    background: rgba(248, 113, 113, .12);
+    color: #f87171;
+  }
+
+  .detail-content {
+    flex: 1;
+  }
+
+  .detail-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: #4b5563;
+    margin-bottom: 4px;
+  }
+
+  .detail-value {
+    font-size: .92rem;
+    color: #d1d5db;
+    line-height: 1.5;
+  }
+
+  /* ── Confirmation card (right) ── */
+  .confirm-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .015));
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 24px;
+    padding: 40px 36px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 120px;
+  }
+
+  .confirm-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(130deg, rgba(212, 175, 55, .07) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .confirm-card .glow-line-gold {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #d4af37 40%, #f5d060 60%, transparent);
+  }
+
+  .confirm-heading {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    margin-bottom: 6px;
+  }
+
+  .confirm-sub {
+    font-size: .88rem;
+    color: #6b7280;
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── Checklist ── */
+  .checklist {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .checklist li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: .9rem;
+    color: #9ca3af;
+  }
+
+  .checklist li .check-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(52, 211, 153, .12);
+    border: 1px solid rgba(52, 211, 153, .3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: .65rem;
+    color: #34d399;
+  }
+
+  /* ── CTA button ── */
+  .btn-apply-confirm {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .04em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #d4af37 0%, #f5d060 50%, #d4af37 100%);
+    background-size: 200%;
+    color: #0d0d0d;
+    transition: background-position .4s ease, transform .2s ease, box-shadow .3s ease;
+    box-shadow: 0 4px 20px rgba(212, 175, 55, .25);
+    margin-bottom: 14px;
+  }
+
+  .btn-apply-confirm:hover {
+    background-position: right center;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(212, 175, 55, .4);
+  }
+
+  .btn-apply-confirm .btn-shine {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255, 255, 255, .35), transparent);
+    animation: shine 2.5s infinite;
+  }
+
+  @keyframes shine {
+    0% {
+      left: -100%;
+    }
+
+    60% {
+      left: 130%;
+    }
+
+    100% {
+      left: 130%;
+    }
+  }
+
+  .btn-apply-cancel {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    color: #6b7280;
+    text-decoration: none;
+    font-size: .9rem;
+    font-weight: 500;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+
+  .btn-apply-cancel:hover {
+    border-color: rgba(255, 255, 255, .2);
+    color: #d1d5db;
+    background: rgba(255, 255, 255, .04);
+    text-decoration: none;
+  }
+
+  /* ── Section title above the grid ── */
+  .apply-hero {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto 48px;
+    padding: 0 20px;
+  }
+
+  .apply-hero .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212, 175, 55, .1);
+    border: 1px solid rgba(212, 175, 55, .25);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #d4af37;
+    margin-bottom: 20px;
+  }
+
+  .apply-hero h1 {
+    font-size: 2.4rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .apply-hero p {
+    color: #6b7280;
+    font-size: .95rem;
+    line-height: 1.7;
+  }
+
+  /* ── Progress bar ── */
+  .apply-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 52px;
+  }
+
+  .prog-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .prog-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .8rem;
+    font-weight: 700;
+    border: 2px solid rgba(255, 255, 255, .1);
+    color: #4b5563;
+    background: rgba(255, 255, 255, .03);
+    transition: all .3s;
+  }
+
+  .prog-dot.done {
+    background: rgba(20, 184, 166, .15);
+    border-color: #14b8a6;
+    color: #14b8a6;
+  }
+
+  .prog-dot.active {
+    background: linear-gradient(135deg, #d4af37, #f5d060);
+    border-color: #d4af37;
+    color: #0d0d0d;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, .2);
+  }
+
+  .prog-label {
+    font-size: .68rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #4b5563;
+    font-weight: 600;
+  }
+
+  .prog-dot.active~.prog-label,
+  .prog-dot.done~.prog-label {
+    color: #9ca3af;
+  }
+
+  .prog-line {
+    flex: 1;
+    max-width: 80px;
+    height: 2px;
+    background: rgba(255, 255, 255, .06);
+    border-radius: 2px;
+    margin-bottom: 22px;
+  }
+
+  .prog-line.done {
+    background: linear-gradient(90deg, #14b8a6, #d4af37);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .apply-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .confirm-card {
+      position: static;
+    }
+
+    .apply-hero h1 {
+      font-size: 1.8rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="apply-page">
+
+  <!-- Hero -->
+  <div class="apply-hero animate__animated animate__fadeInDown">
+    <div class="step-badge"><i class="fa-solid fa-rocket me-1"></i> Application Portal</div>
+    <h1>One Step Away From <br><span
+        style="background:linear-gradient(90deg,#d4af37,#f5d060);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Your
+        Dream Role</span></h1>
+    <p>Review the job details carefully and confirm your application below. Our AI-matching engine has already
+      pre-scored your profile against this role.</p>
+  </div>
+
+  <!-- Progress Steps -->
+  <div class="apply-progress animate__animated animate__fadeIn">
+    <div class="prog-step">
+      <div class="prog-dot done"><i class="fa-solid fa-check"></i></div>
+      <div class="prog-label">Profile</div>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot done"><i class="fa-solid fa-check"></i></div>
+      <div class="prog-label">Match</div>
+    </div>
+    <div class="prog-line done"></div>
+    <div class="prog-step">
+      <div class="prog-dot active">3</div>
+      <div class="prog-label">Confirm</div>
+    </div>
+    <div class="prog-line"></div>
+    <div class="prog-step">
+      <div class="prog-dot">4</div>
+      <div class="prog-label">Applied</div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="apply-grid animate__animated animate__fadeInUp">
+
+    <!-- LEFT — Job Details -->
+    <div class="job-info-card">
+      <div class="glow-line"></div>
+
+      <div class="company-badge">
+        <i class="fa-solid fa-building"></i>
+        {{ job.company }}
+      </div>
+
+      <div class="job-title-text">
+        <span>{{ job.title }}</span>
+      </div>
+      <div class="job-company-text">
+        <i class="fa-solid fa-location-dot me-2" style="color:#d4af37"></i>Full-time Position &nbsp;·&nbsp; {{
+        job.company }}
+      </div>
+
+      <div class="detail-list">
+
+        <div class="detail-row">
+          <div class="detail-icon teal"><i class="fa-solid fa-align-left"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">About the Role</div>
+            <div class="detail-value">{{ job.description }}</div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon green"><i class="fa-solid fa-graduation-cap"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Minimum Eligibility</div>
+            <div class="detail-value">
+              <span style="color:#34d399;font-weight:700;">CGPA {{ job.eligibility_cgpa }}+</span> required to apply
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon gold"><i class="fa-solid fa-code"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Skills Required</div>
+            <div class="detail-value">
+              {% if job.skills_required %}
+              {% for skill in job.skills_required.split %}
+              <span
+                style="display:inline-block;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);border-radius:6px;padding:2px 10px;font-size:.78rem;color:#d4af37;margin:2px 3px 2px 0;">{{
+                skill }}</span>
+              {% endfor %}
+              {% else %}
+              <span style="color:#4b5563;">Not specified</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-row">
+          <div class="detail-icon red"><i class="fa-solid fa-clock"></i></div>
+          <div class="detail-content">
+            <div class="detail-label">Application Deadline</div>
+            <div class="detail-value">
+              <span style="color:#f87171;font-weight:600;">{{ job.last_date|date:"F d, Y" }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT — Confirmation -->
+    <div class="confirm-card">
+      <div class="glow-line-gold"></div>
+
+      <div class="confirm-heading">Confirm Application</div>
+      <div class="confirm-sub">
+        By submitting, your placement cell will receive your profile and this application will be tracked in your
+        dashboard.
+      </div>
+
+      <ul class="checklist">
+        <li>
+          <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+          Your academic profile will be shared with the recruiter
+        </li>
+        <li>
+          <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+          Application status tracked in real-time on your dashboard
+        </li>
+        <li>
+          <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+          You can only apply to each position once
+        </li>
+        <li>
+          <div class="check-icon"><i class="fa-solid fa-check"></i></div>
+          AI-match score will be visible to the HR team
+        </li>
+      </ul>
+
+      <form method="post" action="{% url 'apply_job' job.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-apply-confirm" id="btnConfirmApplication">
+          <span class="btn-shine"></span>
+          <i class="fa-solid fa-paper-plane me-2"></i>
+          Submit My Application
+        </button>
+      </form>
+
+      <a href="{% url 'view_jobs' %}" class="btn-apply-cancel" id="btnCancelApplication">
+        <i class="fa-solid fa-arrow-left me-2"></i>Back to Jobs
+      </a>
+
+      <!-- Trust badge -->
+      <div
+        style="margin-top:28px;padding:16px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:12px;display:flex;align-items:center;gap:12px;">
+        <div
+          style="width:36px;height:36px;background:rgba(52,211,153,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#34d399;font-size:.9rem;flex-shrink:0;">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+          <div style="font-size:.75rem;font-weight:700;color:#9ca3af;letter-spacing:.06em;text-transform:uppercase;">
+            Secure Application</div>
+          <div style="font-size:.78rem;color:#4b5563;margin-top:2px;">Your data is protected and only shared with
+            authorized placement staff.</div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
-
-</body>
-</html>
+{% endblock %}

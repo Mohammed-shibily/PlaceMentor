@@ -1,89 +1,377 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Applications for Your Jobs</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      background: #f4f6f9;
-      font-family: 'Segoe UI', sans-serif;
-    }
-    h2 {
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-    .table th {
-      background: #007bff;
-      color: white;
-    }
-    .status-select {
-      border-radius: 6px;
-      padding: 4px 8px;
-    }
-  </style>
-</head>
-<body>
-<div class="container mt-4">
 
-  <!-- Messages block -->
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+{% block title %}Candidates Pipeline | PlaceMentor{% endblock %}
+
+{% block extra_css %}
+<style>
+  .pipeline-page {
+    padding: 48px 0 100px;
+    background:
+      radial-gradient(ellipse 70% 50% at 5% 5%, rgba(212,175,55,.07) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 95% 90%, rgba(20,184,166,.06) 0%, transparent 55%);
+    min-height: 100vh;
+  }
+  .pipeline-hero { text-align: center; max-width: 640px; margin: 0 auto 52px; padding: 0 20px; }
+  .pipeline-hero .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,175,55,.1); border: 1px solid rgba(212,175,55,.22);
+    border-radius: 50px; padding: 6px 18px;
+    font-size: .73rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #d4af37; margin-bottom: 20px;
+  }
+  .pipeline-hero h1 { font-size: 2.5rem; font-weight: 800; color: #f0f4ff; margin-bottom: 12px; line-height: 1.2; }
+  .pipeline-hero h1 .grad { background: linear-gradient(90deg,#d4af37,#f5d060); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .pipeline-hero p { color: #6b7280; font-size: .95rem; line-height: 1.7; }
+
+  /* Kanban Board */
+  .kanban-board {
+    display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; align-items: flex-start;
+  }
+  .kanban-board::-webkit-scrollbar { height: 8px; }
+  .kanban-board::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 10px; }
+  .kanban-board::-webkit-scrollbar-thumb { background: rgba(212,175,55,.4); border-radius: 10px; }
+
+  .kanban-column {
+    background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.06);
+    border-radius: 20px; min-width: 320px; max-width: 320px; flex-shrink: 0;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .column-header {
+    padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,.06);
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(0,0,0,.15);
+  }
+  .column-title { font-size: 1rem; font-weight: 800; color: #f0f4ff; text-transform: uppercase; letter-spacing: .08em; display: flex; align-items: center; gap: 8px; }
+  .column-badge { background: rgba(255,255,255,.1); color: #d1d5db; padding: 2px 8px; border-radius: 50px; font-size: .75rem; font-weight: 700; }
+
+  .column-cards {
+    padding: 16px; min-height: 200px;
+    display: flex; flex-direction: column; gap: 14px;
+    transition: background 0.2s;
+  }
+  .column-cards.drag-over { background: rgba(212,175,55,.08); border: 2px dashed rgba(212,175,55,.3); }
+
+  /* Card */
+  .k-card {
+    background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.08); border-radius: 16px; padding: 16px;
+    position: relative; overflow: hidden; cursor: grab; transition: transform .2s, box-shadow .2s, opacity .2s;
+    backdrop-filter: blur(8px);
+  }
+  .k-card.dragging { opacity: 0.4; transform: scale(0.95); }
+  .k-card:hover { border-color: rgba(212,175,55,.3); box-shadow: 0 4px 15px rgba(0,0,0,.3); transform: translateY(-3px); }
+  .k-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--card-accent,#374151); opacity: .8; }
+
+  .k-card[data-status="Applied"]     { --card-accent: #64748b; }
+  .k-card[data-status="In Review"]   { --card-accent: #f59e0b; }
+  .k-card[data-status="Shortlisted"] { --card-accent: #14b8a6; }
+  .k-card[data-status="Selected"]    { --card-accent: #10b981; }
+  .k-card[data-status="Rejected"]    { --card-accent: #ef4444; }
+
+  .k-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .k-name { font-size: 1.05rem; font-weight: 800; color: #f0f4ff; margin-bottom: 2px; }
+  .k-email { font-size: .75rem; color: #9ca3af; }
+
+  .k-score-badge {
+    background: rgba(255,255,255,.08); border: 1px solid var(--tier-color, #374151);
+    color: var(--tier-color, #374151); padding: 4px 8px; border-radius: 8px;
+    font-size: .8rem; font-weight: 800; display: flex; align-items: center; gap: 4px;
+    box-shadow: 0 0 10px rgba(0,0,0,.2); white-space: nowrap;
+  }
+
+  .k-body { margin-bottom: 12px; }
+  .k-job { font-size: .8rem; font-weight: 700; color: #d4af37; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .k-meta { font-size: .75rem; color: #d1d5db; display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .k-meta i { width: 14px; text-align: center; color: #14b8a6; }
+
+  /* AI Summary */
+  .ai-summary-box {
+    margin-top: 12px; padding: 10px; background: rgba(139,92,246,.08);
+    border: 1px solid rgba(139,92,246,.2); border-radius: 10px;
+    font-size: .72rem; color: #e5e7eb; line-height: 1.5;
+    display: none;
+  }
+  .ai-summary-toggle {
+    font-size: .7rem; color: #a78bfa; background: none; border: none; padding: 0;
+    cursor: pointer; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+    margin-top: 4px;
+  }
+  .ai-summary-toggle:hover { color: #c4b5fd; text-decoration: underline; }
+
+  /* ── Action Buttons ── */
+  .k-actions {
+    display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; padding-top: 10px;
+    border-top: 1px solid rgba(255,255,255,.06);
+  }
+  .action-btn {
+    flex: 1 1 auto; min-width: 0;
+    font-size: .72rem; font-weight: 700; border: none; border-radius: 8px;
+    padding: 6px 10px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    transition: transform .15s, box-shadow .15s, filter .15s;
+  }
+  .action-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(0,0,0,.35); }
+  .action-btn:active { transform: scale(.96); }
+  .action-btn:disabled { opacity: .5; pointer-events: none; }
+
+  .action-review   { background: rgba(245,158,11,.15); color: #fbbf24; border: 1px solid rgba(245,158,11,.3); }
+  .action-shortlist { background: rgba(20,184,166,.15);  color: #2dd4bf; border: 1px solid rgba(20,184,166,.3); }
+  .action-select    { background: rgba(16,185,129,.15);  color: #34d399; border: 1px solid rgba(16,185,129,.3); }
+  .action-reject    { background: rgba(239,68,68,.12);   color: #f87171; border: 1px solid rgba(239,68,68,.25); }
+
+  .k-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.05); }
+  .k-date { font-size: .7rem; color: #6b7280; }
+
+  .view-btn { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 4px 10px; border-radius: 6px; color: #e5e7eb; font-size: .75rem; text-decoration: none; transition: background .2s; }
+  .view-btn:hover { background: rgba(255,255,255,.15); color: #fff; }
+
+  /* Toast notification */
+  .pipeline-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: rgba(16,185,129,.95); color: #fff; padding: 12px 28px; border-radius: 12px;
+    font-size: .85rem; font-weight: 700; z-index: 9999; pointer-events: none;
+    box-shadow: 0 6px 20px rgba(0,0,0,.4);
+    opacity: 0; transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .35s;
+  }
+  .pipeline-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pipeline-page">
+  <div class="container-fluid px-4 px-md-5">
+
+    <div class="pipeline-hero animate__animated animate__fadeInDown">
+      <div class="eyebrow"><i class="fa-solid fa-filter-circle-dollar"></i> Recruitment Dashboard</div>
+      <h1>Candidate <span class="grad">Pipeline</span></h1>
+      <p>Drag-and-drop candidates across stages or use the action buttons. Our AI "Why Hire Me?" summary helps you evaluate applicants instantly.</p>
+    </div>
+
+    {% if applications %}
+
+    <div class="kanban-board">
+
+      <!-- Applied -->
+      <div class="kanban-column" id="col-Applied">
+        <div class="column-header">
+          <div class="column-title"><i class="fa-solid fa-inbox" style="color:#64748b;"></i> Applied</div>
+          <div class="column-badge" id="count-Applied">0</div>
+        </div>
+        <div class="column-cards" id="cards-Applied">
+          {% for app in applications %}{% if app.status == 'Applied' %}
+            {% include 'partials/_kanban_card.html' with app=app %}
+          {% endif %}{% endfor %}
+        </div>
       </div>
-    {% endfor %}
-  {% endif %}
 
-  <h2><i class="fa-solid fa-users"></i> Applications for Your Jobs</h2>
+      <!-- In Review -->
+      <div class="kanban-column" id="col-InReview">
+        <div class="column-header">
+          <div class="column-title"><i class="fa-solid fa-magnifying-glass" style="color:#f59e0b;"></i> In Review</div>
+          <div class="column-badge" id="count-InReview">0</div>
+        </div>
+        <div class="column-cards" id="cards-InReview">
+          {% for app in applications %}{% if app.status == 'In Review' %}
+            {% include 'partials/_kanban_card.html' with app=app %}
+          {% endif %}{% endfor %}
+        </div>
+      </div>
 
-  <table class="table table-bordered table-striped">
-    <thead>
-      <tr>
-        <th>Student</th>
-        <th>Roll No</th>
-        <th>Branch</th>
-        <th>Job Title</th>
-        <th>Status</th>
-        <th>Applied On</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for app in applications %}
-      <tr>
-        <td>{{ app.student.user.get_full_name|default:app.student.user.username }}</td>
-        <td>{{ app.student.roll_no }}</td>
-        <td>{{ app.student.branch }}</td>
-        <td>{{ app.job.title }}</td>
-        <td>
-          <form method="post" action="{% url 'update_application_status' app.id %}">
-            {% csrf_token %}
-            <select name="status" class="form-select form-select-sm status-select">
-              <option value="Applied" {% if app.status == "Applied" %}selected{% endif %}>Applied</option>
-              <option value="Shortlisted" {% if app.status == "Shortlisted" %}selected{% endif %}>Shortlisted</option>
-              <option value="Selected" {% if app.status == "Selected" %}selected{% endif %}>Selected</option>
-              <option value="Rejected" {% if app.status == "Rejected" %}selected{% endif %}>Rejected</option>
-            </select>
-        </td>
-        <td>{{ app.applied_on|date:"M d, Y H:i" }}</td>
-        <td>
-            <button type="submit" class="btn btn-primary btn-sm">Update</button>
-          </form>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td colspan="7" class="text-center">No applications found</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+      <!-- Shortlisted -->
+      <div class="kanban-column" id="col-Shortlisted">
+        <div class="column-header">
+          <div class="column-title"><i class="fa-solid fa-star" style="color:#14b8a6;"></i> Shortlisted</div>
+          <div class="column-badge" id="count-Shortlisted">0</div>
+        </div>
+        <div class="column-cards" id="cards-Shortlisted">
+          {% for app in applications %}{% if app.status == 'Shortlisted' %}
+            {% include 'partials/_kanban_card.html' with app=app %}
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+
+      <!-- Selected -->
+      <div class="kanban-column" id="col-Selected">
+        <div class="column-header">
+          <div class="column-title"><i class="fa-solid fa-check-double" style="color:#10b981;"></i> Selected</div>
+          <div class="column-badge" id="count-Selected">0</div>
+        </div>
+        <div class="column-cards" id="cards-Selected">
+          {% for app in applications %}{% if app.status == 'Selected' %}
+            {% include 'partials/_kanban_card.html' with app=app %}
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+
+      <!-- Rejected -->
+      <div class="kanban-column" id="col-Rejected">
+        <div class="column-header">
+          <div class="column-title"><i class="fa-solid fa-xmark" style="color:#ef4444;"></i> Rejected</div>
+          <div class="column-badge" id="count-Rejected">0</div>
+        </div>
+        <div class="column-cards" id="cards-Rejected">
+          {% for app in applications %}{% if app.status == 'Rejected' %}
+            {% include 'partials/_kanban_card.html' with app=app %}
+          {% endif %}{% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    {% else %}
+    <div class="empty-state animate__animated animate__fadeIn" style="max-width: 600px; margin: 0 auto; text-align: center; padding: 60px 20px; background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.05); border-radius: 20px;">
+      <div style="width: 80px; height: 80px; border-radius: 20px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07); display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #374151; margin: 0 auto 20px;"><i class="fa-solid fa-inbox"></i></div>
+      <h3 style="font-size: 1.25rem; font-weight: 800; color: #f0f4ff; margin-bottom: 8px;">No Applications Yet</h3>
+      <p style="color: #4b5563; font-size: .9rem;">No candidates have applied to your job postings yet. Keep promoting your listings!</p>
+    </div>
+    {% endif %}
+
+  </div>
 </div>
 
-<!-- Bootstrap JS for dismissible alerts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<!-- Toast element -->
+<div class="pipeline-toast" id="pipelineToast"></div>
+
+<form id="status-csrf-form" style="display:none;">{% csrf_token %}</form>
+
+<script>
+// ── Helpers ──────────────────────────────────────────
+const STATUS_COL_MAP = {
+  'Applied': 'Applied', 'In Review': 'InReview',
+  'Shortlisted': 'Shortlisted', 'Selected': 'Selected', 'Rejected': 'Rejected'
+};
+const COL_STATUS_MAP = {
+  'Applied': 'Applied', 'InReview': 'In Review',
+  'Shortlisted': 'Shortlisted', 'Selected': 'Selected', 'Rejected': 'Rejected'
+};
+
+function getCSRF() {
+  return document.querySelector('#status-csrf-form input[name="csrfmiddlewaretoken"]').value;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('pipelineToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── Action‑button handler for each card ──
+function getActionButtons(status, appId) {
+  const map = {
+    'Applied': `
+      <button class="action-btn action-review"   onclick="updateStatus('${appId}','In Review')"><i class="fa-solid fa-magnifying-glass"></i> Review</button>
+      <button class="action-btn action-shortlist" onclick="updateStatus('${appId}','Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
+    'In Review': `
+      <button class="action-btn action-shortlist" onclick="updateStatus('${appId}','Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
+    'Shortlisted': `
+      <button class="action-btn action-select"    onclick="updateStatus('${appId}','Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
+    'Rejected': `
+      <button class="action-btn action-review"    onclick="updateStatus('${appId}','In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>`,
+    'Selected': ''
+  };
+  return map[status] || '';
+}
+
+// ── Core: update a candidate's status (used by BOTH drag-drop & buttons) ──
+async function updateStatus(appId, newStatus) {
+  const card = document.getElementById('card-' + appId);
+  if (!card) return;
+
+  // Determine target column
+  const colKey = STATUS_COL_MAP[newStatus];
+  const targetCol = document.getElementById('cards-' + colKey);
+  if (!targetCol) { alert('Column not found for status: ' + newStatus); return; }
+
+  // Optimistic UI: move card, update data, refresh buttons
+  targetCol.appendChild(card);
+  card.dataset.status = newStatus;
+  const actionsDiv = document.getElementById('actions-' + appId);
+  if (actionsDiv) actionsDiv.innerHTML = getActionButtons(newStatus, appId);
+  updateCounts();
+
+  // AJAX call
+  try {
+    const res = await fetch(`/hr/update-status/${appId}/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': getCSRF()
+      },
+      body: new URLSearchParams({ 'status': newStatus })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(`✅ Status updated to "${newStatus}"`);
+    } else {
+      showToast('❌ Error: ' + (data.error || 'Unknown'));
+      setTimeout(() => window.location.reload(), 1500);
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Network error – please reload');
+  }
+}
+
+// ── Drag‑and‑drop ────────────────────────────────────
+function allowDrop(ev) {
+  ev.preventDefault();
+  const col = ev.target.closest('.column-cards');
+  if (col) {
+    document.querySelectorAll('.column-cards').forEach(c => c.classList.remove('drag-over'));
+    col.classList.add('drag-over');
+  }
+}
+
+function drag(ev) {
+  const card = ev.target.closest('.k-card');
+  if (!card) return;
+  ev.dataTransfer.setData('text/plain', card.dataset.appid);
+  ev.dataTransfer.effectAllowed = 'move';
+  requestAnimationFrame(() => card.classList.add('dragging'));
+}
+
+function dragEnd(ev) {
+  const card = ev.target.closest('.k-card');
+  if (card) card.classList.remove('dragging');
+  document.querySelectorAll('.column-cards').forEach(c => c.classList.remove('drag-over'));
+}
+
+// Make columns valid drop targets
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.column-cards').forEach(col => {
+    col.addEventListener('dragover', allowDrop);
+    col.addEventListener('dragleave', () => col.classList.remove('drag-over'));
+    col.addEventListener('drop', ev => {
+      ev.preventDefault();
+      col.classList.remove('drag-over');
+      const appId = ev.dataTransfer.getData('text/plain');
+      if (!appId) return;
+      const colKey = col.id.replace('cards-', '');
+      const newStatus = COL_STATUS_MAP[colKey];
+      if (newStatus) updateStatus(appId, newStatus);
+    });
+  });
+  updateCounts();
+});
+
+// ── Counts ───────────────────────────────────────────
+function updateCounts() {
+  Object.values(STATUS_COL_MAP).forEach(colKey => {
+    const countEl = document.getElementById('count-' + colKey);
+    const listEl  = document.getElementById('cards-' + colKey);
+    if (countEl && listEl) countEl.innerText = listEl.children.length;
+  });
+}
+
+// ── AI Summary toggle ────────────────────────────────
+function toggleAiSummary(appId) {
+  const box = document.getElementById('ai-summ-' + appId);
+  box.style.display = (box.style.display === 'none' || box.style.display === '') ? 'block' : 'none';
+}
+</script>
+{% endblock %}

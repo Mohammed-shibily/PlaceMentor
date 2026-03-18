@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Saved Jobs | PlaceMentor{% endblock %}
+
+{% block extra_css %}
+<style>
+  .saved-page {
+    padding: 52px 0 100px;
+    background:
+      radial-gradient(ellipse 70% 50% at 0% 0%, rgba(212,175,55,.07) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 100% 95%, rgba(20,184,166,.06) 0%, transparent 55%);
+    min-height: 100vh;
+  }
+
+  /* Hero */
+  .saved-hero { text-align: center; max-width: 580px; margin: 0 auto 52px; }
+  .saved-hero .eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(212,175,55,.1); border: 1px solid rgba(212,175,55,.22);
+    border-radius: 50px; padding: 6px 18px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase; color: #d4af37; margin-bottom: 22px;
+  }
+  .saved-hero h1 {
+    font-size: 2.6rem; font-weight: 800; color: #f0f4ff;
+    line-height: 1.2; margin-bottom: 12px;
+  }
+  .saved-hero h1 .grad {
+    background: linear-gradient(90deg, #d4af37, #f5d060);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .saved-hero p { color: #6b7280; font-size: .95rem; }
+
+  /* Saved Card */
+  .saved-card {
+    background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.08); border-radius: 22px;
+    padding: 24px 28px; margin-bottom: 16px;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+    backdrop-filter: blur(12px); position: relative; overflow: hidden;
+  }
+  .saved-card::before {
+    content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+    width: 3px; border-radius: 0 3px 3px 0;
+    background: linear-gradient(180deg, #d4af37, #f5d060); opacity: .7;
+  }
+  .saved-card:hover {
+    border-color: rgba(212,175,55,.3); transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  }
+
+  .sc-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 14px; flex-wrap: wrap; }
+  .sc-info .sc-company {
+    font-size: .72rem; font-weight: 700; color: #d4af37;
+    text-transform: uppercase; letter-spacing: .07em; margin-bottom: 5px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .sc-info .sc-title { font-size: 1.15rem; font-weight: 800; color: #f0f4ff; margin: 0; line-height: 1.3; }
+  .sc-meta { display: flex; align-items: center; gap: 16px; margin-top: 6px; flex-wrap: wrap; }
+  .sc-meta span { font-size: .72rem; color: #6b7280; display: flex; align-items: center; gap: 5px; }
+  .sc-meta i { font-size: .65rem; color: #4b5563; }
+
+  /* Action Buttons */
+  .sc-actions { display: flex; gap: 10px; flex-shrink: 0; align-items: flex-start; }
+  .btn-sc-apply {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 20px; border-radius: 50px;
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    color: #fff; font-size: .8rem; font-weight: 700;
+    text-decoration: none; white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(20,184,166,.2);
+    transition: transform .2s, box-shadow .2s;
+  }
+  .btn-sc-apply:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(20,184,166,.35); color: #fff; }
+
+  .btn-sc-remove {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 50px;
+    background: rgba(239,68,68,.1); border: 1px solid rgba(239,68,68,.25);
+    color: #f87171; font-size: .8rem; font-weight: 700; white-space: nowrap;
+    cursor: pointer; transition: background .2s, border-color .2s, transform .2s;
+  }
+  .btn-sc-remove:hover { background: rgba(239,68,68,.2); border-color: rgba(239,68,68,.4); transform: translateY(-2px); }
+
+  /* Skills Divider */
+  .sc-divider { height: 1px; background: rgba(255,255,255,.05); margin: 14px 0; }
+
+  /* Skill Pills */
+  .skills-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .skill-tag {
+    font-size: .68rem; font-weight: 700; text-transform: capitalize;
+    padding: 4px 12px; border-radius: 50px;
+    background: rgba(212,175,55,.08); border: 1px solid rgba(212,175,55,.18);
+    color: #d4af37; letter-spacing: .04em;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .skill-tag i { font-size: .55rem; }
+
+  /* Stats Bar */
+  .saved-stats {
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px;
+  }
+  .stat-bubble {
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+    border-radius: 50px; padding: 8px 18px;
+    font-size: .78rem; color: #f0f4ff; font-weight: 700;
+  }
+  .stat-bubble i { color: #d4af37; }
+
+  /* Empty State */
+  .empty-box {
+    text-align: center; padding: 80px 40px;
+    background: rgba(255,255,255,.02);
+    border: 1px solid rgba(255,255,255,.05); border-radius: 24px;
+  }
+  .empty-box h3 { color: #f0f4ff; font-size: 1.4rem; font-weight: 800; margin-bottom: 10px; }
+  .empty-box p { color: #4b5563; font-size: .92rem; max-width: 400px; margin: 0 auto 28px; }
+  .btn-explore {
+    display: inline-flex; align-items: center; gap: 8px; padding: 11px 28px;
+    border-radius: 50px; background: linear-gradient(135deg, #d4af37, #f5d060);
+    color: #0a0a0a; font-size: .88rem; font-weight: 800; text-decoration: none;
+    box-shadow: 0 4px 16px rgba(212,175,55,.25); transition: transform .2s, box-shadow .2s;
+  }
+  .btn-explore:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,.4); color: #0a0a0a; }
+
+  @media (max-width: 640px) {
+    .saved-hero h1 { font-size: 2rem; }
+    .saved-card { padding: 18px; }
+    .sc-header { flex-direction: column; }
+    .sc-actions { width: 100%; }
+    .btn-sc-apply, .btn-sc-remove { flex: 1; justify-content: center; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="saved-page">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="saved-hero animate__animated animate__fadeInDown">
+      <div class="eyebrow"><i class="fa-solid fa-bookmark"></i> Saved Opportunities</div>
+      <h1>Your <span class="grad">Saved Jobs</span></h1>
+      <p>Jobs you bookmarked for later. Apply when you're ready — deadlines don't wait!</p>
+    </div>
+
+    {% if bookmarks %}
+
+    <!-- Stats -->
+    <div class="saved-stats animate__animated animate__fadeIn">
+      <div class="stat-bubble"><i class="fa-solid fa-bookmark"></i> {{ bookmarks|length }} Bookmark{{ bookmarks|length|pluralize }}</div>
+    </div>
+
+    <!-- Job Cards -->
+    <div class="animate__animated animate__fadeInUp">
+      {% for bm in bookmarks %}
+      <div class="saved-card">
+        <div class="sc-header">
+          <div class="sc-info">
+            <div class="sc-company">
+              <i class="fa-solid fa-building"></i>{{ bm.job.company }}
+            </div>
+            <h5 class="sc-title">{{ bm.job.title }}</h5>
+            <div class="sc-meta">
+              <span><i class="fa-solid fa-clock"></i> Saved {{ bm.bookmarked_at|timesince }} ago</span>
+              {% if bm.job.eligibility_cgpa %}
+              <span><i class="fa-solid fa-star"></i> Min CGPA {{ bm.job.eligibility_cgpa }}</span>
+              {% endif %}
+              <span><i class="fa-solid fa-calendar-xmark"></i> Closes {{ bm.job.last_date|date:"M d, Y" }}</span>
+            </div>
+          </div>
+          <div class="sc-actions">
+            <a href="{% url 'apply_job' bm.job.id %}" class="btn-sc-apply">
+              <i class="fa-solid fa-paper-plane"></i> Apply
+            </a>
+            <button type="button" class="btn-sc-remove"
+              onclick="confirmRemove('{{ bm.job.id }}', '{{ bm.job.title|escapejs }}')">
+              <i class="fa-solid fa-bookmark-slash"></i> Remove
+            </button>
+          </div>
+        </div>
+
+        {% if bm.job.skills_required %}
+        <div class="sc-divider"></div>
+        <div class="skills-row">
+          {% for skill in bm.job.skills_required.split %}
+          <span class="skill-tag">
+            <i class="fa-solid fa-bolt"></i>{{ skill|cut:"," }}
+          </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-box animate__animated animate__fadeIn">
+      <i class="fa-regular fa-bookmark fa-3x mb-4" style="color:#1e293b; font-size:3rem;"></i>
+      <h3>No Saved Jobs Yet</h3>
+      <p>Browse available jobs and tap the bookmark icon to save the ones you like — they'll appear here.</p>
+      <a href="{% url 'view_jobs' %}" class="btn-explore">
+        <i class="fa-solid fa-magnifying-glass"></i> Explore Jobs
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+function confirmRemove(jobId, jobTitle) {
+  Swal.fire({
+    title: 'Remove Bookmark?',
+    text: `Remove "${jobTitle}" from your saved jobs?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#ef4444',
+    cancelButtonColor: '#374151',
+    confirmButtonText: '<i class="fa-solid fa-trash me-1"></i> Yes, remove',
+    cancelButtonText: 'Cancel',
+    background: '#111827',
+    color: '#f0f4ff',
+    showClass: { popup: 'animate__animated animate__zoomIn animate__faster' },
+    hideClass: { popup: 'animate__animated animate__zoomOut animate__faster' }
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = `/bookmark/${jobId}/`;
+    }
+  });
+}
+</script>
+{% endblock %}
+{% endblock %}

@@ -1,60 +1,180 @@
+﻿{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About - PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-2 px-4">
-  <a class="navbar-brand fw-bold" href="/">PlaceMentor</a>
-  <div class="ms-auto">
-    <a href="/" class="nav-link d-inline text-white">Home</a>
-    <a href="/about/" class="nav-link d-inline text-warning">About</a>
-    <a href="/contact/" class="nav-link d-inline text-white">Contact</a>
-  </div>
-</nav>
+{% block title %}About Us | PlaceMentor{% endblock %}
 
-<!-- About Section -->
-<section class="py-5 text-center">
+{% block extra_css %}
+<style>
+  .page-header {
+    padding: 160px 0 60px;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(20, 184, 166, 0.1) 0%, transparent 70%);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .page-header h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    margin-bottom: 20px;
+  }
+  .page-header h1 span {
+    background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .page-header p {
+    color: #6b7280;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+  
+  .about-grid-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    padding: 40px 0 100px;
+  }
+  
+  .about-story h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    margin-bottom: 24px;
+    font-family: var(--font-heading);
+  }
+  .about-story p {
+    color: #94a3b8;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .about-features-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+  }
+  .about-features-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    color: #f0f4ff;
+    font-size: 1rem;
+  }
+  .about-features-list li i {
+    color: #14b8a6;
+    font-size: 1.2rem;
+  }
+
+  /* Stat cards */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 20px;
+    padding-bottom: 80px;
+  }
+  .stat-box {
+    background: linear-gradient(145deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 20px;
+    padding: 40px 24px;
+    text-align: center;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .stat-box:hover {
+    transform: translateY(-5px);
+    border-color: rgba(20, 184, 166, 0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .stat-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    display: inline-block;
+  }
+  .stat-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #f0f4ff;
+    margin-bottom: 12px;
+    font-family: var(--font-heading);
+  }
+  .stat-desc {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .about-grid-content { grid-template-columns: 1fr; }
+    .stats-row { grid-template-columns: 1fr; }
+    .page-header { padding: 120px 20px 40px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header animate__animated animate__fadeIn">
   <div class="container">
-    <h2 class="fw-bold mb-3">About Us</h2>
-    <p class="text-muted mx-auto" style="max-width: 700px;">
-      At <strong>PlaceMentor - Excellence College</strong>, we empower students by connecting them with 
-      the right career opportunities. Our placement cell works tirelessly to bridge the gap between academia 
-      and industry, ensuring students are equipped with the right skills and exposure.
-    </p>
-    <div class="row mt-5 g-4">
-      <div class="col-md-4">
-        <div class="p-4 shadow rounded bg-light h-100">
-          <h4>🎯 Our Mission</h4>
-          <p>To provide the best career guidance and ensure maximum student placement success.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="p-4 shadow rounded bg-light h-100">
-          <h4>🤝 Our Partners</h4>
-          <p>We collaborate with 50+ companies to bring top opportunities for students.</p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="p-4 shadow rounded bg-light h-100">
-          <h4>📈 Our Results</h4>
-          <p>With an 85% success rate, we take pride in shaping successful careers.</p>
+    <h1>Empowering <span>Careers</span></h1>
+    <p>PlaceMentor bridges the gap between ambitious students and industry leaders, fostering a future of excellence.</p>
+  </div>
+</div>
+
+<div class="container animate__animated animate__fadeInUp">
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-icon">🎯</div>
+      <div class="stat-title">Strategy</div>
+      <div class="stat-desc">Personalized guidance and industry-ready programs tailored for success.</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon">🤝</div>
+      <div class="stat-title">Partnerships</div>
+      <div class="stat-desc">Collaborating with 50+ global organizations across all major sectors.</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-icon">📈</div>
+      <div class="stat-title">Success Rate</div>
+      <div class="stat-desc">An 85% placement rate with 500+ students launched into elite roles.</div>
+    </div>
+  </div>
+
+  <div class="about-grid-content">
+    <div class="about-story">
+      <span class="section-label">Our Story</span>
+      <h2>Excellence in <br><span style="color:var(--gold)">Placement Services</span></h2>
+      <p>At PlaceMentor, we believe every student deserves a platform to shine. Our placement cell works tirelessly to ensure students are equipped with the right skills and exposure to succeed.</p>
+      
+      <ul class="about-features-list">
+        <li><i class="fa-solid fa-circle-check"></i> Dedicated Placement Officers</li>
+        <li><i class="fa-solid fa-circle-check"></i> Pre-placement Aptitude Training</li>
+        <li><i class="fa-solid fa-circle-check"></i> Alumni Network Mentorship</li>
+        <li><i class="fa-solid fa-circle-check"></i> International Internship Drives</li>
+      </ul>
+    </div>
+    
+    <div class="about-visual">
+      <div class="about-card animate-float">
+        <div class="about-card-icon" style="display:inline-block; animation: rocketFly 2.5s ease-in-out infinite alternate;">🚀</div>
+        <h3>10+ Years of Excellence</h3>
+        <p>Transforming academic potential into professional success stories through dedicated mentorship.</p>
+        <div class="about-card-stats">
+          <div class="about-card-stat">
+            <div class="num">50+</div>
+            <div class="lbl">Hiring Partners</div>
+          </div>
+          <div class="about-card-stat">
+            <div class="num">500+</div>
+            <div class="lbl">Students Placed</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</section>
-
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-3 mt-5">
-  <p>&copy; 2025 PlaceMentor - Excellence College</p>
-</footer>
-
-</body>
-</html>
+</div>
+{% endblock %}

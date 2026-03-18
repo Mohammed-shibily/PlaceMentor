@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Job | PlaceMentor{% endblock %}
+
+{% block content %}
+<div class="container py-5 animate__animated animate__fadeIn">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="glass-card p-5">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="bg-gold-soft p-3 rounded-4">
+            <i class="fa-solid fa-pen-to-square fs-2"></i>
+          </div>
+          <div>
+            <h2 class="fw-bold text-white mb-0">Edit Job Posting</h2>
+            <p class="text-white-50 mb-0">Update the details for "{{ job.title }}"</p>
+          </div>
+        </div>
+
+        <form method="POST" class="mt-4">
+          {% csrf_token %}
+          
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Job Title</label>
+            <input type="text" name="title" value="{{ job.title }}" class="form-control py-3" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Description</label>
+            <textarea name="description" rows="5" class="form-control py-3" required>{{ job.description }}</textarea>
+          </div>
+
+          <div class="row g-4 mb-4">
+            <div class="col-md-6">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest">Eligibility (CGPA)</label>
+              <input type="number" step="0.01" name="eligibility_cgpa" value="{{ job.eligibility_cgpa }}" class="form-control py-3">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest">Last Date to Apply</label>
+              <input type="date" name="last_date" value="{{ job.last_date|date:'Y-m-d' }}" class="form-control py-3" required>
+            </div>
+          </div>
+
+          <div class="mb-5">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest">Required Skills</label>
+            <input type="text" name="skills_required" value="{{ job.skills_required }}" class="form-control py-3" placeholder="e.g. Python, SQL, React">
+            <div class="form-text text-white-50 small">Separate skills with commas.</div>
+          </div>
+
+          <div class="d-flex gap-3">
+            <button type="submit" class="btn btn-student px-5 py-3 rounded-pill fw-bold flex-grow-1">
+              Update Job Posting
+            </button>
+            <a href="{% url 'hrdashboard' %}" class="btn btn-outline-light px-5 py-3 rounded-pill fw-bold">
+              Cancel
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

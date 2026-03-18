@@ -1,0 +1,57 @@
+<div class="k-card" id="card-{{ app.id }}" data-appid="{{ app.id }}" data-status="{{ app.status }}" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
+
+  <div class="k-header">
+    <div>
+      <div class="k-name">{{ app.student.user.get_full_name|default:app.student.user.username }}</div>
+      <div class="k-email">{{ app.student.user.email }}</div>
+    </div>
+    <div class="k-score-badge" style="--tier-color: {{ app.rank_tier_color }};">
+      <i class="fa-solid fa-robot"></i> {{ app.rank_score }}%
+    </div>
+  </div>
+
+  <div class="k-body">
+    <div class="k-job"><i class="fa-solid fa-briefcase"></i> {{ app.job.title }}</div>
+    <div class="k-meta">
+      <span><i class="fa-solid fa-graduation-cap"></i> {{ app.student.branch }}</span>
+      <span><i class="fa-solid fa-star" style="color:#d4af37;"></i> CGPA: {{ app.student.cgpa }}</span>
+    </div>
+
+    <button type="button" class="ai-summary-toggle" onclick="toggleAiSummary('{{ app.id }}')">
+      <i class="fa-solid fa-sparkles"></i> View "Why Hire Me?" AI Summary
+    </button>
+    <div class="ai-summary-box" id="ai-summ-{{ app.id }}">
+      <strong><i class="fa-solid fa-robot mb-1"></i> AI Analysis:</strong><br>
+      {{ app.ai_summary }}
+    </div>
+  </div>
+
+  <!-- ── Action Buttons ── -->
+  <div class="k-actions" id="actions-{{ app.id }}">
+    {% if app.status == 'Applied' %}
+      <button class="action-btn action-review"   onclick="updateStatus('{{ app.id }}', 'In Review')"><i class="fa-solid fa-magnifying-glass"></i> Review</button>
+      <button class="action-btn action-shortlist" onclick="updateStatus('{{ app.id }}', 'Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+    {% elif app.status == 'In Review' %}
+      <button class="action-btn action-shortlist" onclick="updateStatus('{{ app.id }}', 'Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+    {% elif app.status == 'Shortlisted' %}
+      <button class="action-btn action-select"    onclick="updateStatus('{{ app.id }}', 'Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
+      <button class="action-btn action-reject"    onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+    {% elif app.status == 'Rejected' %}
+      <button class="action-btn action-review"    onclick="updateStatus('{{ app.id }}', 'In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>
+    {% endif %}
+  </div>
+
+  <div class="k-footer">
+    <div class="k-date"><i class="fa-solid fa-clock"></i> {{ app.applied_on|timesince }} ago</div>
+    <div>
+      <a href="mailto:{{ app.student.user.email }}" class="view-btn"><i class="fa-solid fa-envelope"></i></a>
+      {% if app.status == "Shortlisted" and not app.interview %}
+      <a href="{% url 'create_interview' app.id %}" class="view-btn" style="background: rgba(20,184,166,.1); border-color: rgba(20,184,166,.3); color: #2dd4bf;" title="Schedule Interview">
+        <i class="fa-regular fa-calendar-plus"></i>
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</div>

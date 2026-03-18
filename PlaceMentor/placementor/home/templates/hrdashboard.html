@@ -1,136 +1,328 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HR Dashboard | PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: #f8f9fa;
-    }
-    .navbar {
-      background: linear-gradient(135deg, #007bff, #0056b3);
-    }
-    .navbar-brand, .nav-link, .navbar-text {
-      color: #fff !important;
-    }
-    .dashboard-card {
-      border-radius: 16px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-      transition: transform 0.3s ease;
-    }
-    .dashboard-card:hover {
-      transform: translateY(-5px);
-    }
-    .table th {
-      background: #007bff;
-      color: white;
-    }
-  </style>
-</head>
-<body>
+{% block title %}HR Dashboard | PlaceMentor{% endblock %}
 
-<!-- ✅ Navbar -->
-<nav class="navbar navbar-expand-lg">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="#">PlaceMentor - HR Dashboard</a>
-    <div class="d-flex">
-      <span class="navbar-text me-3">
-        Hi, {{ request.session.hr_name }}
-      </span>
-      <a href="{% url 'hr_logout' %}" class="btn btn-sm btn-light">Logout</a>
+{% block extra_css %}
+<style>
+  .dashboard-hero {
+    background: linear-gradient(135deg, rgba(10, 14, 26, 1) 0%, rgba(17, 24, 39, 1) 100%);
+    border-radius: 24px;
+    padding: 40px;
+    margin-bottom: 40px;
+    border: 1px solid rgba(245, 166, 35, 0.1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dashboard-hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.05) 0%, transparent 70%);
+    z-index: 0;
+  }
+
+  .glass-card {
+    background: rgba(17, 24, 39, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    border-color: rgba(245, 166, 35, 0.3);
+    transform: translateY(-5px);
+  }
+
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 1.25rem;
+  }
+
+  .bg-gold-soft {
+    background: rgba(245, 166, 35, 0.1);
+    color: var(--gold);
+  }
+
+  .bg-teal-soft {
+    background: rgba(13, 148, 136, 0.1);
+    color: var(--teal-light);
+  }
+
+  .bg-purple-soft {
+    background: rgba(139, 92, 246, 0.1);
+    color: #a78bfa;
+  }
+
+  .activity-row {
+    border-radius: 12px;
+    transition: background 0.2s;
+    margin-bottom: 8px;
+  }
+
+  .activity-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .status-badge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .status-applied {
+    background: rgba(148, 163, 184, 0.1);
+    color: #ffffff;
+  }
+
+  .status-selected {
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
+  }
+
+  .status-rejected {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+  }
+
+  .stat-card-glow {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card-glow::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(245, 166, 35, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .search-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+  }
+
+  .search-container:focus-within {
+    border-color: var(--gold);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(245, 166, 35, 0.1);
+  }
+
+  .search-input {
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    width: 100%;
+  }
+
+  .search-input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4 animate__animated animate__fadeIn">
+
+  <!-- Premium Header Section -->
+  <div class="dashboard-hero d-flex flex-column flex-md-row align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-4">
+      <div class="bg-gold-soft p-3 rounded-4">
+        <i class="fa-solid fa-building-user fs-1"></i>
+      </div>
+      <div class="text-center text-md-start">
+        <h1 class="h2 fw-bold text-white mb-1">HR Command Center</h1>
+        <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+          <span class="badge bg-gold-soft">{{ hr.company }}</span>
+          <span class="text-gold opacity-50">•</span>
+          <span>HR Manager: {{ hr.fullname }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="mt-4 mt-md-0">
+      <a href="{% url 'post_job' %}" class="btn btn-student px-4 py-2 rounded-pill shadow-lg text-decoration-none">
+        <i class="fa-solid fa-plus me-2"></i>Post New Job
+      </a>
     </div>
   </div>
-</nav>
 
-<!-- ✅ Main Content -->
-<div class="container my-5">
-  <div class="row g-4 justify-content-center">
-    
-    <!-- Post Job -->
-    <div class="col-md-5">
-      <div class="card dashboard-card p-4 text-center">
-        <h5 class="fw-bold">Post a Job</h5>
-        <p>Create and publish job postings for students.</p>
-        <a href="{% url 'post_job' %}" class="btn btn-primary">Post Job</a>
+  <!-- Quick Stats -->
+  <div class="row g-4 mb-5">
+    <div class="col-6 col-md-4">
+      <div class="glass-card stat-card-glow p-4 text-center">
+        <div class="stat-icon bg-gold-soft mx-auto"><i class="fa-solid fa-briefcase"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ active_jobs }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Active Jobs</p>
+        <div class="mt-2 small text-success">
+          <i class="fa-solid fa-arrow-trend-up me-1"></i>Live Now
+        </div>
       </div>
     </div>
-
-    <!-- View Applicants -->
-    <div class="col-md-5">
-      <div class="card dashboard-card p-4 text-center">
-        <h5 class="fw-bold">View Applicants</h5>
-        <p>Check applications submitted by students.</p>
-        <a href="{% url 'hr_applications' %}" class="btn btn-success">View Applicants</a>
+    <div class="col-6 col-md-4">
+      <div class="glass-card stat-card-glow p-4 text-center">
+        <div class="stat-icon bg-teal-soft mx-auto"><i class="fa-solid fa-users"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ applications_count }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Total Applicants</p>
+        <div class="mt-2 small text-white-50">
+          <i class="fa-solid fa-circle-check text-teal-light me-1"></i>Last 30 days
+        </div>
       </div>
     </div>
-
-  </div>
-
-  <!-- ✅ New Dashboard Stats Row -->
-  <div class="row g-4 mt-4">
-    <div class="col-md-4">
-      <div class="card dashboard-card p-4 text-center">
-        <h5 class="fw-bold">Active Jobs</h5>
-        <h2>{{ active_jobs }}</h2>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card dashboard-card p-4 text-center">
-        <h5 class="fw-bold">Applications</h5>
-        <h2>{{ applications_count }}</h2>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="card dashboard-card p-4 text-center">
-        <h5 class="fw-bold">Interviews Scheduled</h5>
-        <h2>{{ interviews }}</h2>
+    <div class="col-6 col-md-4">
+      <div class="glass-card stat-card-glow p-4 text-center">
+        <div class="stat-icon bg-purple-soft mx-auto"><i class="fa-solid fa-video"></i></div>
+        <h3 class="h2 fw-bold text-white mb-1">{{ interviews }}</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Interviews</p>
+        <div class="mt-2 small text-gold">
+          <i class="fa-solid fa-clock me-1"></i>Upcoming
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ✅ Applications Table -->
-  <div class="card p-4 mt-5">
-    <h5 class="fw-bold mb-3">Recent Applications</h5>
+  <!-- Recent Candidate Activity -->
+  <div class="glass-card p-4">
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
+      <h5 class="fw-bold text-white mb-0">Recent Candidate Activity</h5>
+      
+      <div class="d-flex align-items-center gap-3">
+        <div class="search-container d-flex align-items-center">
+          <i class="fa-solid fa-magnifying-glass text-white-50 me-2 small"></i>
+          <input type="text" id="candidateSearch" class="search-input small" placeholder="Search by name or position...">
+        </div>
+        <a href="{% url 'hr_applications' %}" class="btn btn-link text-gold text-decoration-none small p-0">View All</a>
+      </div>
+    </div>
+
     <div class="table-responsive">
-      <table class="table table-bordered table-hover">
+      <table class="table table-dark table-hover align-middle mb-0">
         <thead>
-          <tr>
-            <th>Student</th>
-            <th>Position</th>
-            <th>Company</th>
-            <th>Status</th>
-            <th>Interview</th>
+          <tr class="text-white-50 small text-uppercase tracking-wider border-0">
+            <th class="ps-0 border-0">Candidate</th>
+            <th class="border-0">Position</th>
+            <th class="border-0">Status</th>
+            <th class="text-end pe-0 border-0">Action</th>
           </tr>
         </thead>
-        <tbody>
-          {% for app in applications %}
-          <tr>
-            <td>{{ app.student.user.get_full_name|default:app.student.user.username }}</td>
-            <td>{{ app.job.title }}</td>
-            <td>{{ app.job.company }}</td>
-            <td>{{ app.status }}</td>
-            <td>
+        <tbody class="border-0">
+          {% for app in applications|slice:":8" %}
+          <tr class="activity-row border-0">
+            <td class="ps-0 py-3 border-0">
+              <div class="d-flex align-items-center gap-3">
+                <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center"
+                  style="width: 35px; height: 35px; border: 1px solid rgba(255,255,255,0.05)">
+                  <span class="small">{{ app.student.user.username|slice:":1"|upper }}</span>
+                </div>
+                <span class="fw-bold text-white">{{ app.student.user.username }}</span>
+              </div>
+            </td>
+            <td class="py-3 border-0">
+              <span class="text-gold small">{{ app.job.title }}</span>
+            </td>
+            <td class="py-3 border-0">
+              <span class="status-badge 
+                {% if app.status == 'Selected' %}status-selected
+                {% elif app.status == 'Rejected' %}status-rejected
+                {% else %}status-applied{% endif %}">
+                {{ app.status }}
+              </span>
+            </td>
+            <td class="text-end pe-0 py-3 border-0">
               {% if app.interview %}
-                ✅ Scheduled ({{ app.interview.date|date:"M d, Y H:i" }})
+              <span class="text-gold small d-flex align-items-center justify-content-end gap-2">
+                <i class="fa-solid fa-check-double"></i> Interviewed
+              </span>
+              {% elif app.status == "Selected" %}
+              <a href="{% url 'create_interview' app.id %}"
+                class="btn btn-outline-teal btn-sm px-3 rounded-pill">Schedule</a>
               {% else %}
-                {% if app.status == "Selected" %}
-                  <a href="{% url 'create_interview' app.id %}" class="btn btn-sm btn-primary">Schedule</a>
-                {% else %}
-                  <span class="text-muted">Not eligible</span>
-                {% endif %}
+              <span class="text-white-50 small italic">Processing</span>
               {% endif %}
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="5" class="text-center">No applications found</td>
+            <td colspan="4" class="text-center py-5 text-white-50">
+              <div class="mb-3"><i class="fa-solid fa-folder-open fs-1 opacity-20"></i></div>
+              <span>No candidates found for your postings.</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Manage My Jobs -->
+  <div class="glass-card p-4 mt-5 animate__animated animate__fadeInUp">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h5 class="fw-bold text-white mb-0">Manage My Postings</h5>
+      <span class="badge bg-gold-soft">{{ jobs_list|length }} Total</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-dark table-hover align-middle mb-0">
+        <thead>
+          <tr class="text-white-50 small text-uppercase tracking-wider border-0">
+            <th class="ps-0 border-0">Job Title</th>
+            <th class="border-0">Posted On</th>
+            <th class="border-0">Deadline</th>
+            <th class="text-end pe-0 border-0">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="border-0">
+          {% for job in jobs_list %}
+          <tr class="job-activity-row border-0">
+            <td class="ps-0 py-3 border-0">
+              <span class="fw-bold text-white">{{ job.title }}</span>
+            </td>
+            <td class="py-3 border-0">
+              <span class="text-white-50 small">{{ job.created_at|date:"M d, Y" }}</span>
+            </td>
+            <td class="py-3 border-0">
+              <span class="{% if job.last_date < now %}text-danger{% else %}text-teal-light{% endif %} small">
+                {{ job.last_date|date:"M d, Y" }}
+              </span>
+            </td>
+            <td class="text-end pe-0 py-3 border-0">
+              <div class="d-flex justify-content-end gap-2">
+                <a href="{% url 'edit_job' job.id %}" class="btn btn-outline-teal btn-sm rounded-pill">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="confirmDelete('{{ job.id }}', '{{ job.title }}')">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" class="text-center py-5 text-white-50">
+              <div class="mb-3"><i class="fa-solid fa-folder-plus fs-1 opacity-20"></i></div>
+              <span>No jobs posted yet.</span>
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -139,21 +331,26 @@
   </div>
 
 </div>
+{% endblock %}
 
-<!-- ✅ SweetAlert for Django messages -->
-{% if messages %}
+{% block extra_js %}
 <script>
-  {% for message in messages %}
+  function confirmDelete(jobId, jobTitle) {
     Swal.fire({
-      icon: "{% if 'success' in message.tags %}success{% elif 'error' in message.tags or 'danger' in message.tags %}error{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}",
-      title: "{{ message|escapejs }}",
-      timer: 2000,
-      showConfirmButton: false
+      title: 'Are you sure?',
+      text: `Do you want to delete the job posting: "${jobTitle}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      background: '#111827',
+      color: '#f0f4ff'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/hr/job/delete/${jobId}/`;
+      }
     });
-  {% endfor %}
+  }
 </script>
-{% endif %}
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

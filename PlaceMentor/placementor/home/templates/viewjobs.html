@@ -1,76 +1,206 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Available Jobs | PlaceMentor</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f5f5f5; font-family: 'Poppins', sans-serif; }
-    .job-card { transition: 0.3s; border-radius: 10px; }
-    .job-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
-    .btn-apply { background-color: #007bff; color: white; border-radius: 5px; }
-    .btn-apply:hover { background-color: #0056b3; }
-  </style>
-</head>
-<body>
 
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-  <div class="container-fluid">
-    <a class="navbar-brand fw-bold" href="{% url 'index' %}">PlaceMentor</a>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'student_dashboard' %}">Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link active" href="{% url 'view_jobs' %}">Jobs</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
-      </ul>
+{% block title %}Available Jobs | PlaceMentor{% endblock %}
+
+{% block content %}
+<div class="container animate__animated animate__fadeIn">
+  <header class="text-center mb-5">
+    <h1 class="display-4 fw-bold mb-3">Explore <span class="text-gold">Opportunities</span></h1>
+    <p class="text-muted mx-auto" style="max-width: 600px;">Expertly curated career paths from top-tier organizations
+      waiting for your application.</p>
+  </header>
+
+  <!-- Search & Filter Bar -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-lg-8">
+      <div class="position-relative">
+        <i class="fa-solid fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+        <input type="text" id="jobSearch"
+          class="form-control bg-dark2 border-secondary border-opacity-25 text-light ps-5 py-3 rounded-pill shadow-lg"
+          placeholder="Search by company, title, or skills...">
+      </div>
     </div>
   </div>
-</nav>
-
-<div class="container mt-5">
-  <!-- Back Button to Student Dashboard -->
-  <a href="{% url 'student_dashboard' %}" class="btn btn-secondary mb-3">← Back to Dashboard</a>
-  
-  <h1 class="mb-4 text-center fw-bold">Available Jobs</h1>
 
   {% if jobs %}
-    <div class="row">
-      {% for job in jobs %}
-        <div class="col-md-6 mb-4">
-          <div class="card job-card shadow-sm p-3">
-            <div class="card-body">
-              <h5 class="card-title">{{ job.title }}</h5>
-              <p class="card-text">{{ job.description|linebreaksbr }}</p>
+  <div class="row g-4" id="jobGrid">
+    {% for job in jobs %}
+    <div class="col-md-6 job-item animate__animated animate__fadeInUp"
+      style="animation-delay: {{ forloop.counter0 }}00ms;">
+      <div class="card bg-dark2 border border-secondary border-opacity-10 rounded-4 p-4 h-100 job-card">
+        <div class="d-flex justify-content-between align-items-start mb-3 gap-2">
+          <h3 class="h4 fw-bold mb-0 text-light job-title">{{ job.title }}</h3>
+          <div class="d-flex flex-column align-items-end gap-2">
+            {% if job.is_closing_soon %}
+            <span class="badge bg-danger-soft text-danger px-3 py-1 small animate__animated animate__pulse animate__infinite">
+              Closing Soon
+            </span>
+            {% endif %}
+            <span class="badge bg-teal-soft text-teal px-3 py-1 small">Open</span>
+          </div>
+        </div>
 
-              <p><strong>Eligibility:</strong> 
-                {% if job.eligibility_cgpa and job.eligibility_cgpa > 0 %}
-                  CGPA ≥ {{ job.eligibility_cgpa }}
-                {% else %} N/A {% endif %}
-              </p>
+        <h6 class="text-gold fw-bold mb-3 company-name">
+          <i class="fa-solid fa-building me-2"></i>{{ job.company }}
+        </h6>
 
-              <p><strong>Skills:</strong> 
-                {% if job.skills_required %} {{ job.skills_required }} 
-                {% else %} Not specified {% endif %}
-              </p>
+        <p class="text-muted small mb-4 line-clamp-2">{{ job.description }}</p>
 
-              <p><strong>Last Date:</strong> 
-                {% if job.last_date %} {{ job.last_date|date:"M d, Y" }}
-                {% else %} Not specified {% endif %}
-              </p>
-
-              <a href="{% url 'apply_job' job.id %}" class="btn btn-apply">Apply</a>
+        <div class="job-meta border-top border-secondary border-opacity-10 pt-4 mt-auto">
+          <div class="row g-3">
+            <div class="col-6">
+              <span class="d-block text-muted x-small text-uppercase">Minimum CGPA</span>
+              <span class="fw-bold text-light">{{ job.eligibility_cgpa }}</span>
+            </div>
+            <div class="col-6">
+              <span class="d-block text-muted x-small text-uppercase">Deadline</span>
+              <span class="fw-bold {% if job.is_closing_soon %}text-danger{% else %}text-light{% endif %}">
+                <i class="fa-solid fa-clock {% if job.is_closing_soon %}me-2{% endif %}"></i>
+                {{ job.last_date|date:"M d, Y" }}
+              </span>
+            </div>
+            <div class="col-12">
+              <span class="d-block text-muted x-small text-uppercase mb-2">Required Skills</span>
+              <div class="d-flex flex-wrap gap-2 skills-list">
+                {% if job.skills_required %}
+                {% for s in job.skills_required.split %}
+                <span class="badge bg-gold-soft text-gold border border-gold border-opacity-10 px-2 py-1"
+                  style="font-size: 0.7rem; letter-spacing: 0.5px;">
+                  <i class="fa-solid fa-bolt me-1 small"></i>{{ s|cut:"," }}
+                </span>
+                {% endfor %}
+                {% else %}
+                <span class="text-muted small italic">General Requirements</span>
+                {% endif %}
+              </div>
             </div>
           </div>
         </div>
-      {% endfor %}
+
+        <div class="mt-4 d-flex gap-2">
+          <a href="{% url 'apply_job' job.id %}" class="btn btn-student flex-grow-1 py-2">Apply Now <i
+              class="fa-solid fa-paper-plane ms-2"></i></a>
+          <a href="{% url 'toggle_bookmark' job.id %}" class="btn py-2 px-3"
+            style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.2);color:#d4af37;"
+            title="Save Job">
+            <i class="fa-solid fa-bookmark"></i>
+          </a>
+        </div>
+      </div>
     </div>
+    {% endfor %}
+  </div>
+
+  <!-- No Results Placeholder -->
+  <div id="noResults" class="text-center py-5 d-none">
+    <i class="fa-solid fa-search fa-3x mb-3 text-muted opacity-25"></i>
+    <h4 class="text-muted">No matching opportunities found.</h4>
+    <p>Try different keywords or check back later.</p>
+  </div>
   {% else %}
-    <p class="text-center fs-5">No jobs available right now.</p>
+  <div class="text-center py-5">
+    <i class="fa-solid fa-briefcase fa-4x mb-3 text-muted opacity-25"></i>
+    <h4 class="text-muted">No jobs are currently available.</h4>
+    <p>Please check back later or refresh your profile.</p>
+  </div>
   {% endif %}
 </div>
 
-</body>
-</html>
+<style>
+  .job-card {
+    transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .job-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gold) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .bg-dark2 {
+    background: #111827;
+  }
+
+  .bg-teal-soft {
+    background: rgba(13, 148, 136, 0.1);
+  }
+
+  .text-teal {
+    color: #2dd4bf;
+  }
+  
+  .bg-danger-soft {
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  .x-small {
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Search Input Visual Fixes */
+  #jobSearch {
+    color: var(--white) !important;
+    caret-color: var(--gold);
+  }
+
+  #jobSearch::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  #jobSearch:focus {
+    background: #1a2233 !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 20px rgba(245, 166, 35, 0.15) !important;
+  }
+</style>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('jobSearch');
+    const jobItems = document.querySelectorAll('.job-item');
+    const noResults = document.getElementById('noResults');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', function (e) {
+        const text = e.target.value.toLowerCase().trim();
+        let hasVisible = false;
+
+        jobItems.forEach(item => {
+          // Optimized search by specific fields
+          const title = item.querySelector('.job-title').innerText.toLowerCase();
+          const company = item.querySelector('.company-name').innerText.toLowerCase();
+          const skills = item.querySelector('.skills-list').innerText.toLowerCase();
+
+          if (title.includes(text) || company.includes(text) || skills.includes(text)) {
+            item.classList.remove('d-none');
+            hasVisible = true;
+          } else {
+            item.classList.add('d-none');
+          }
+        });
+
+        // Toggle no results message
+        if (noResults) {
+          if (!hasVisible && text.length > 0) {
+            noResults.classList.remove('d-none');
+          } else {
+            noResults.classList.add('d-none');
+          }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

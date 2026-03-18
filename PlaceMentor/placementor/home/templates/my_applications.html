@@ -1,41 +1,620 @@
-{% extends "base.html" %}
-{% block content %}
-<div class="container mt-5">
-  <h2 class="fw-bold text-center mb-4">My Applications</h2>
+{% extends 'base.html' %}
+{% load static %}
 
-  {% if applications %}
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-dark">
-          <tr>
-            <th>Job Title</th>
-            <th>Company</th>
-            <th>Status</th>
-            <th>Applied On</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for app in applications %}
-            <tr>
-              <td>{{ app.job.title }}</td>
-              <td>{{ app.job.company }}</td>
-              <td>
-                <span class="badge 
-                  {% if app.status == 'Accepted' %} bg-success
-                  {% elif app.status == 'Rejected' %} bg-danger
-                  {% elif app.status == 'In Review' %} bg-warning
-                  {% else %} bg-secondary {% endif %}">
-                  {{ app.status }}
-                </span>
-              </td>
-              <td>{{ app.applied_on|date:"M d, Y H:i" }}</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  {% else %}
-    <p class="text-center text-muted">You haven’t applied to any jobs yet.</p>
-  {% endif %}
-</div>
+{% block title %}My Applications | PlaceMentor{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ── Page Shell ── */
+  .apps-page {
+    padding: 48px 0 100px;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 5%, rgba(20, 184, 166, .07) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 90% 85%, rgba(212, 175, 55, .06) 0%, transparent 55%);
+  }
+
+  /* ── Hero ── */
+  .apps-hero {
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto 56px;
+    padding: 0 20px;
+  }
+
+  .apps-hero .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212, 175, 55, .1);
+    border: 1px solid rgba(212, 175, 55, .22);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: .73rem;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #d4af37;
+    margin-bottom: 22px;
+  }
+
+  .apps-hero h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    line-height: 1.15;
+    margin-bottom: 14px;
+  }
+
+  .apps-hero h1 .grad {
+    background: linear-gradient(90deg, #d4af37, #f5d060);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .apps-hero p {
+    color: #6b7280;
+    font-size: .97rem;
+    line-height: 1.7;
+  }
+
+  /* ── Stats Bar ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 44px;
+  }
+
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 50px;
+    padding: 10px 20px;
+    backdrop-filter: blur(12px);
+    transition: border-color .25s;
+  }
+
+  .stat-pill:hover {
+    border-color: rgba(255, 255, 255, .15);
+  }
+
+  .stat-pill .s-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .stat-pill .s-label {
+    font-size: .72rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 600;
+  }
+
+  .stat-pill .s-num {
+    font-size: 1.05rem;
+    color: #f0f4ff;
+    font-weight: 800;
+  }
+
+  /* ── Section header ── */
+  .vault-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .vault-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #f0f4ff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .vault-title .icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(212, 175, 55, .12);
+    border: 1px solid rgba(212, 175, 55, .2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d4af37;
+    font-size: .85rem;
+  }
+
+  .btn-browse {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #14b8a6, #0d9488);
+    color: #fff;
+    font-size: .82rem;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    letter-spacing: .04em;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 15px rgba(20, 184, 166, .2);
+  }
+
+  .btn-browse:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(20, 184, 166, .35);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ── Application Cards ── */
+  .app-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, .015));
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 20px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .25s, transform .25s, box-shadow .25s;
+    backdrop-filter: blur(12px);
+  }
+
+  .app-card:hover {
+    border-color: rgba(255, 255, 255, .14);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+  }
+
+  .app-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 20%;
+    bottom: 20%;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: var(--accent-color, #4b5563);
+    opacity: .6;
+    transition: opacity .25s;
+  }
+
+  .app-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Status accent colors */
+  .app-card.s-applied {
+    --accent-color: #64748b;
+  }
+
+  .app-card.s-selected {
+    --accent-color: #10b981;
+  }
+
+  .app-card.s-rejected {
+    --accent-color: #ef4444;
+  }
+
+  .app-card.s-shortlisted {
+    --accent-color: #14b8a6;
+  }
+
+  /* Company icon */
+  .company-icon {
+    width: 52px;
+    height: 52px;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #d4af37;
+  }
+
+  /* Card body */
+  .app-card-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .app-job-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #f0f4ff;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-company-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .app-company-name {
+    font-size: .85rem;
+    color: #9ca3af;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .app-company-name i {
+    color: #d4af37;
+    font-size: .75rem;
+  }
+
+  .app-ref {
+    font-size: .7rem;
+    color: #374151;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, .04);
+    border: 1px solid rgba(255, 255, 255, .06);
+    border-radius: 6px;
+    padding: 2px 8px;
+  }
+
+  /* Card right section */
+  .app-card-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .app-date {
+    font-size: .78rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .app-date i {
+    font-size: .65rem;
+  }
+
+  /* Status badge */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+
+  .status-pill .s-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .status-pill.applied {
+    background: rgba(100, 116, 139, .12);
+    color: #94a3b8;
+    border: 1px solid rgba(100, 116, 139, .25);
+  }
+
+  .status-pill.applied .s-indicator {
+    background: #94a3b8;
+  }
+
+  .status-pill.selected {
+    background: rgba(16, 185, 129, .12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, .25);
+  }
+
+  .status-pill.selected .s-indicator {
+    background: #10b981;
+    box-shadow: 0 0 6px #10b981;
+  }
+
+  .status-pill.rejected {
+    background: rgba(239, 68, 68, .12);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, .25);
+  }
+
+  .status-pill.rejected .s-indicator {
+    background: #ef4444;
+  }
+
+  .status-pill.shortlisted {
+    background: rgba(20, 184, 166, .12);
+    color: #14b8a6;
+    border: 1px solid rgba(20, 184, 166, .25);
+  }
+
+  .status-pill.shortlisted .s-indicator {
+    background: #14b8a6;
+    box-shadow: 0 0 6px #14b8a6;
+  }
+
+  /* ── Empty State ── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+  }
+
+  .empty-icon-wrap {
+    width: 90px;
+    height: 90px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, .03);
+    border: 1px solid rgba(255, 255, 255, .07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.2rem;
+    color: #374151;
+    margin: 0 auto 24px;
+  }
+
+  .empty-state h3 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #f0f4ff;
+    margin-bottom: 10px;
+  }
+
+  .empty-state p {
+    color: #4b5563;
+    max-width: 380px;
+    margin: 0 auto 28px;
+    font-size: .9rem;
+    line-height: 1.7;
+  }
+
+  .btn-start {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #d4af37, #f5d060);
+    color: #0d0d0d;
+    font-weight: 700;
+    font-size: .9rem;
+    text-decoration: none;
+    transition: transform .2s, box-shadow .2s;
+    box-shadow: 0 4px 18px rgba(212, 175, 55, .25);
+  }
+
+  .btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(212, 175, 55, .4);
+    color: #0d0d0d;
+    text-decoration: none;
+  }
+
+  @media (max-width: 576px) {
+    .app-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .app-card-right {
+      align-items: flex-start;
+    }
+
+    .apps-hero h1 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Withdraw button */
+  .app-card-withdraw { flex-shrink: 0; }
+  .btn-withdraw {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: rgba(239, 68, 68, .1); border: 1px solid rgba(239, 68, 68, .25);
+    color: #ef4444; display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; cursor: pointer;
+    transition: background .2s, box-shadow .2s, transform .2s;
+  }
+  .btn-withdraw:hover {
+    background: rgba(239, 68, 68, .25); box-shadow: 0 0 12px rgba(239, 68, 68, .3);
+    transform: scale(1.05);
+  }
+</style>
 {% endblock %}
+
+{% block content %}
+<div class="apps-page">
+  <div class="container">
+
+    <!-- Hero -->
+    <div class="apps-hero animate__animated animate__fadeInDown">
+      <div class="eyebrow">
+        <i class="fa-solid fa-chart-line"></i>
+        Application Tracker
+      </div>
+      <h1>My <span class="grad">Applications</span></h1>
+      <p>Track the real-time status of every role you've applied for — from submission to selection.</p>
+    </div>
+
+    <!-- Stats Bar -->
+    {% if applications %}
+    <div class="stats-bar animate__animated animate__fadeIn">
+      <div class="stat-pill">
+        <div class="s-dot" style="background:#d4af37;box-shadow:0 0 6px #d4af37;"></div>
+        <span class="s-label">Total</span>
+        <span class="s-num">{{ total_count }}</span>
+      </div>
+      <div class="stat-pill">
+        <div class="s-dot" style="background:#10b981;box-shadow:0 0 6px #10b981;"></div>
+        <span class="s-label">Selected</span>
+        <span class="s-num">{{ selected_count }}</span>
+      </div>
+      <div class="stat-pill">
+        <div class="s-dot" style="background:#14b8a6;"></div>
+        <span class="s-label">Shortlisted</span>
+        <span class="s-num">{{ shortlisted_count }}</span>
+      </div>
+      <div class="stat-pill">
+        <div class="s-dot" style="background:#94a3b8;"></div>
+        <span class="s-label">Pending</span>
+        <span class="s-num">{{ pending_count }}</span>
+      </div>
+      <div class="stat-pill">
+        <div class="s-dot" style="background:#ef4444;"></div>
+        <span class="s-label">Rejected</span>
+        <span class="s-num">{{ rejected_count }}</span>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Vault -->
+    <div class="animate__animated animate__fadeInUp">
+
+      <!-- Header row -->
+      <div class="vault-header">
+        <div class="vault-title">
+          <div class="icon-box"><i class="fa-solid fa-layer-group"></i></div>
+          Application Vault
+        </div>
+        <a href="{% url 'view_jobs' %}" class="btn-browse" id="btnBrowseMoreJobs">
+          <i class="fa-solid fa-magnifying-glass"></i> Browse More Jobs
+        </a>
+      </div>
+
+      {% if applications %}
+      {% for app in applications %}
+      {% with status_lower=app.status|lower %}
+      <div class="app-card
+          {% if app.status == 'Selected' or app.status == 'Accepted' %}s-selected
+          {% elif app.status == 'Rejected' %}s-rejected
+          {% elif app.status == 'Shortlisted' %}s-shortlisted
+          {% else %}s-applied{% endif %}">
+
+        <!-- Company Icon -->
+        <div class="company-icon">
+          <i class="fa-solid fa-building"></i>
+        </div>
+
+        <!-- Body -->
+        <div class="app-card-body">
+          <div class="app-job-title">{{ app.job.title }}</div>
+          <div class="app-company-row">
+            <div class="app-company-name">
+              <i class="fa-solid fa-circle-dot"></i> {{ app.job.company }}
+            </div>
+            <span class="app-ref">PM-{{ app.id|add:1000 }}</span>
+          </div>
+        </div>
+
+        <!-- Right -->
+        <div class="app-card-right">
+          <div class="app-date">
+            <i class="fa-solid fa-calendar-days"></i>
+            {{ app.applied_on|date:"M d, Y" }}
+          </div>
+          <span class="status-pill
+              {% if app.status == 'Selected' or app.status == 'Accepted' %}selected
+              {% elif app.status == 'Rejected' %}rejected
+              {% elif app.status == 'Shortlisted' %}shortlisted
+              {% else %}applied{% endif %}">
+            <span class="s-indicator"></span>
+            {{ app.status }}
+          </span>
+        </div>
+
+        <!-- Withdraw button (only for pending/Applied status) -->
+        {% if app.status == 'Applied' %}
+        <div class="app-card-withdraw">
+          <button type="button" class="btn-withdraw" title="Withdraw Application"
+            onclick="confirmWithdraw('{{ app.id }}', '{{ app.job.title }}')">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        {% endif %}
+
+      </div>
+      {% endwith %}
+      {% endfor %}
+
+      {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <i class="fa-solid fa-inbox"></i>
+        </div>
+        <h3>No Applications Yet</h3>
+        <p>You haven't applied for any roles yet. Our AI engine has great matches ready for your profile.</p>
+        <a href="{% url 'view_jobs' %}" class="btn-start" id="btnStartApplying">
+          <i class="fa-solid fa-rocket"></i> Start Applying
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+function confirmWithdraw(appId, jobTitle) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: `Do you want to withdraw your application for "${jobTitle}"? This action cannot be undone.`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#374151',
+        confirmButtonText: 'Yes, withdraw',
+        background: '#111827',
+        color: '#f0f4ff',
+        backdrop: `rgba(0,0,0,0.6)`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Create a form dynamically and submit it
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/withdraw-application/${appId}/`;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = '{{ csrf_token }}';
+            
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    });
+}
+</script>
+{% endblock %}
+{% endblock %}
