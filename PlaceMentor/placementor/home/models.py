@@ -28,6 +28,7 @@ class Interview(models.Model):
         
 class Notification(models.Model):
         student = models.ForeignKey(StudentProfile, on_delete=models.CASCADE)
+        job = models.ForeignKey("Job", on_delete=models.CASCADE, null=True, blank=True)
         message = models.CharField(max_length=255)
         is_read = models.BooleanField(default=False)
         created_at = models.DateTimeField(auto_now_add=True)

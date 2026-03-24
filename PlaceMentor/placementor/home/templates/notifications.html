@@ -53,11 +53,15 @@
         {% endfor %}
       </div>
       {% else %}
-      <div class="text-center py-5">
-        <i class="fa-solid fa-bell-slash fa-4x mb-4 text-muted opacity-25"></i>
-        <h4 class="text-muted fw-bold">Silence in the Vault</h4>
-        <p class="text-muted">We'll notify you here when new opportunities arise or your status changes.</p>
-        <a href="{% url 'view_jobs' %}" class="btn btn-outline-teal px-4 mt-3">Explore Jobs</a>
+      <div class="empty-state-enhanced animate__animated animate__fadeIn">
+        <div class="empty-state-icon-ring">
+          <i class="fa-solid fa-bell-slash"></i>
+        </div>
+        <h3>All Caught Up!</h3>
+        <p>No notifications yet. We'll let you know when new opportunities arise or your application status changes.</p>
+        <a href="{% url 'view_jobs' %}" class="empty-state-cta teal" id="btnExploreJobsNotif">
+          <i class="fa-solid fa-magnifying-glass"></i> Explore Jobs
+        </a>
       </div>
       {% endif %}
     </div>

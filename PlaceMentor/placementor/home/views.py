@@ -172,8 +172,13 @@ def student_dashboard(request):
     notifications = Notification.objects.filter(student=profile).order_by("-created_at")[:3]
 
     # 🔔 Unread "new job" alerts for popup
+    # We only show alerts for jobs that are still active (not expired)
+    # Using the new 'job' foreign key for a precise database-level join
     job_alerts = Notification.objects.filter(
-        student=profile, is_read=False, message__contains="🚀 New Job Alert"
+        student=profile, 
+        is_read=False, 
+        message__contains="🚀 New Job Alert",
+        job__last_date__gte=timezone.now()
     ).order_by("-created_at")[:5]
 
     total_apps = Application.objects.filter(student=profile).count()
@@ -362,6 +367,7 @@ def post_job(request):
             notifications_to_create.append(
                 Notification(
                     student=student,
+                    job=new_job,
                     message=(
                         f"🚀 New Job Alert! '{new_job.title}' at {new_job.company} "
                         f"is now open for applications. Apply before it's too late!"

@@ -1,0 +1,30 @@
+--- Active Jobs ---
+ID: 16, Title: senior cloud architect at rak tecnolagies, Last Date: 2026-07-07
+ID: 20, Title: FULL STACK  DEVELOPER at zalaris, Last Date: 2026-03-19
+ID: 22, Title: Product Support Analyst at zalaris, Last Date: 2026-03-19
+
+--- Unread New Job Alerts ---
+ID: 68, Student: Das, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 69, Student: albert, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 70, Student: JENIN, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 71, Student: Akash, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 72, Student: jestin123, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 73, Student: Gokul, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 74, Student: eric, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 75, Student: fasil, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 76, Student: SHIBILY, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 78, Student: rahul, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 79, Student: finalteststudent, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 80, Student: tester1, Message: 🚀 New Job Alert! 'Test Job via Script' at WIPRO is now open for applications. Apply before it's too late!
+ID: 82, Student: Das, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 83, Student: albert, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 84, Student: JENIN, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 85, Student: Akash, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 86, Student: jestin123, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 87, Student: Gokul, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 88, Student: eric, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 89, Student: fasil, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 90, Student: SHIBILY, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 92, Student: rahul, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 93, Student: finalteststudent, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!
+ID: 94, Student: tester1, Message: 🚀 New Job Alert! 'Product Support Analyst' at zalaris is now open for applications. Apply before it's too late!

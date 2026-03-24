@@ -21,7 +21,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}?v=1.1" />
 
     <style>
         .nav-item.active {
@@ -46,6 +46,7 @@
 </head>
 
 <body class="bg-dark text-light">
+
 
     <!-- Navbar -->
     <nav class="navbar scrolled" id="navbar">
@@ -105,6 +106,7 @@
             </ul>
 
             <div class="nav-buttons">
+
                 {% if user.is_authenticated or request.session.hr_id %}
                 <a href="{% url 'logout' %}"
                     class="btn {% if request.session.hr_id %}btn-hr{% else %}btn-student{% endif %}">Logout</a>
@@ -169,8 +171,6 @@
 
             /* ---- Navbar scroll effect ---- */
             const navbar = document.getElementById('navbar');
-            // Sub-pages should have scrolled navbar by default. 
-            // navbar.classList.add('scrolled'); 
 
             window.addEventListener('scroll', () => {
                 navbar.classList.toggle('scrolled', window.scrollY > 60);
@@ -193,6 +193,8 @@
                 });
             }, { threshold: 0.5 });
             sectionTitles.forEach(t => titleObserver.observe(t));
+
+
 
         })();
     </script>

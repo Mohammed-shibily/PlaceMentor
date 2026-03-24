@@ -26,6 +26,7 @@
 
 <body>
 
+
   <!-- ============================================
      1. NAVBAR
      ============================================ -->
@@ -60,6 +61,7 @@
       </ul>
 
       <div class="nav-buttons">
+
         {% if not user.is_authenticated %}
         <a href="{% url 'studlogin' %}" class="btn btn-student" id="btnStudentLogin">Student Login</a>
         <a href="{% url 'hrlogin' %}" class="btn btn-hr" id="btnHrLogin">HR Login</a>
@@ -545,6 +547,8 @@
         });
       }, { threshold: 0.3 });
       aboutFeatures.forEach(f => featureObserver.observe(f));
+
+
 
     })();
   </script>

@@ -198,11 +198,13 @@
 
     {% else %}
     <!-- Empty State -->
-    <div class="empty-box animate__animated animate__fadeIn">
-      <i class="fa-regular fa-bookmark fa-3x mb-4" style="color:#1e293b; font-size:3rem;"></i>
+    <div class="empty-state-enhanced animate__animated animate__fadeIn">
+      <div class="empty-state-icon-ring">
+        <i class="fa-regular fa-bookmark"></i>
+      </div>
       <h3>No Saved Jobs Yet</h3>
-      <p>Browse available jobs and tap the bookmark icon to save the ones you like — they'll appear here.</p>
-      <a href="{% url 'view_jobs' %}" class="btn-explore">
+      <p>Browse available jobs and tap the bookmark icon to save the ones you like — they'll appear right here for quick access.</p>
+      <a href="{% url 'view_jobs' %}" class="empty-state-cta" id="btnExploreSaved">
         <i class="fa-solid fa-magnifying-glass"></i> Explore Jobs
       </a>
     </div>

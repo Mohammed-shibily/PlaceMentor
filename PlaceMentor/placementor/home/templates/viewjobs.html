@@ -99,10 +99,16 @@
     <p>Try different keywords or check back later.</p>
   </div>
   {% else %}
-  <div class="text-center py-5">
-    <i class="fa-solid fa-briefcase fa-4x mb-3 text-muted opacity-25"></i>
-    <h4 class="text-muted">No jobs are currently available.</h4>
-    <p>Please check back later or refresh your profile.</p>
+  <!-- Enhanced Empty State (Pattern #6) -->
+  <div class="empty-state-enhanced animate__animated animate__fadeIn">
+    <div class="empty-state-icon-ring">
+      <i class="fa-solid fa-briefcase"></i>
+    </div>
+    <h3>No Openings Right Now</h3>
+    <p>Our partner companies are preparing new roles. Check back soon — or set up your profile so you're ready when they drop!</p>
+    <a href="{% url 'edit_profile' %}" class="empty-state-cta" id="btnSetupProfile">
+      <i class="fa-solid fa-user-pen"></i> Complete Your Profile
+    </a>
   </div>
   {% endif %}
 </div>
