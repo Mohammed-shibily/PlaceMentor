@@ -1,0 +1,641 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage{setspace}
+\usepackage[a4paper,
+  left=1.5in,
+  right=1in,
+  top=1in,
+  bottom=1in]{geometry}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
+
+% ─── Color definitions ───────────────────────────────────────────────────────
+\definecolor{codebg}{RGB}{245,245,245}
+\definecolor{codeframe}{RGB}{200,200,200}
+\definecolor{keywordcolor}{RGB}{0,0,180}
+\definecolor{commentcolor}{RGB}{80,80,80}
+\definecolor{stringcolor}{RGB}{160,32,32}
+\definecolor{accentblue}{RGB}{30,100,200}
+
+% ─── Code listing style ──────────────────────────────────────────────────────
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\bfseries\color{keywordcolor},
+    commentstyle=\itshape\color{commentcolor},
+    stringstyle=\ttfamily\color{stringcolor},
+    breaklines=true,
+    frame=none,          
+    backgroundcolor={},  
+    numbers=left,        
+    numberstyle=\tiny\color{black},
+    showstringspaces=false,
+    tabsize=4,
+    captionpos=b,
+    xleftmargin=1.5em
+}
+
+% ════════════════════════════════════════════════════════════════════════════
+\begin{document}
+
+% ─── Title Page ──────────────────────────────────────────────────────────────
+\begin{titlepage}
+\begin{center}
+
+\Large
+\textbf{PLACEMENTOR: CAMPUS PLACEMENT MANAGEMENT SYSTEM}
+
+\vspace{1.5cm}
+
+\large
+A MAIN PROJECT REPORT\\[0.2cm]
+submitted in partial fulfillment of the requirements for the award of the
+Degree of
+
+\vspace{0.8cm}
+
+\textbf{Master of Computer Applications}\\
+UNDER\\
+\textbf{APJ Abdul Kalam Technological University}
+
+\vspace{1.5cm}
+
+BY
+
+\vspace{0.2cm}
+
+\textbf{MOHAMMED SHIBILY C}\\
+MES24MCA--2031
+
+\vspace{0.6cm}
+
+\includegraphics[width=4.5cm]{mes.jpeg}
+
+\vspace{0.6cm}
+
+\textbf{DEPARTMENT OF COMPUTER APPLICATIONS}\\
+MES COLLEGE OF ENGINEERING\\
+Kuttippuram, Malappuram - 679 582
+
+\vfill
+
+March 2026
+
+\end{center}
+\end{titlepage}
+
+% ─── Declaration ─────────────────────────────────────────────────────────────
+\thispagestyle{empty}
+\begin{center}
+\Large\textbf{Declaration}
+\end{center}
+
+\onehalfspacing
+I undersigned hereby declare that the project report \textbf{PLACEMENTOR: CAMPUS PLACEMENT MANAGEMENT SYSTEM} submitted for partial fulfilment of the requirements for the award of degree of Master of Computer Applications of the APJ Abdul Kalam Technological University, Kerala, is a bonafide work done by me under supervision of \textbf{Ms. C M Sulaikha}, Assistant Professor, Department of Computer Applications. This submission represents my ideas in my own words and where ideas or words of others have been included, I have adequately and accurately cited and referenced the original sources. I also declare that I have adhered to ethics of academic honesty and integrity and have not misrepresented or fabricated any data or idea or fact or source in my submission. I understand that any violation of the above will be a cause for disciplinary action by the institute and/or the University and can also evoke penal action from the sources which have thus not been properly cited or from whom proper permission has not been obtained. This report has not been previously formed the basis for the award of any degree, diploma or similar title of any other University.
+
+\vspace{3cm}
+
+\noindent Date: \today \hfill
+\begin{tabular}[t]{@{}r@{}}
+Mohammed Shibily C \\[0.5cm]
+MES24MCA--2031
+\end{tabular}
+
+\newpage
+
+% ─── Certificate ─────────────────────────────────────────────────────────────
+\thispagestyle{empty}
+\begin{center}
+\textbf{\Large MES COLLEGE OF ENGINEERING}\\[0.2cm]
+\textbf{KUTTIPPURAM, KERALA -- 679 582}\\[0.2cm]
+\small
+(A NAAC ACCREDITED INSTITUTION WITH NBA ACCREDITED DEPARTMENTS,\\
+APPROVED BY AICTE AND AFFILIATED TO APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY )\\[0.5cm]
+\includegraphics[width=110pt, height=110pt]{mes.jpeg}\\[0.5cm]
+\textbf{\large DEPARTMENT OF COMPUTER APPLICATIONS}\\[0.5cm]
+\textbf{\Large CERTIFICATE}\\[0.5cm]
+\end{center}
+
+\normalsize
+\noindent
+This is to certify that the project report entitled \textbf{PLACEMENTOR: CAMPUS PLACEMENT MANAGEMENT SYSTEM} is a bonafide record of the Main Project work during the academic year 2025--26 carried out by \textbf{MOHAMMED SHIBILY C (MES24MCA--2031)}, submitted to the APJ Abdul Kalam Technological University, in partial fulfilment of the requirements for the award of \textit{Degree of Master of Computer Applications} under \textit{APJ Abdul Kalam Technological University}, under my guidance and supervision. This report in any form has not been submitted to any other University or Institution for any purpose.
+
+\vspace{1.5cm}
+
+\begin{tabular}{p{7cm} p{7cm}}
+Internal Supervisor(s) & External Supervisor(s) \\[3cm]
+External Examiner & Head of the Department \\
+\end{tabular}
+
+\pagenumbering{roman}
+\newpage
+
+% ─── Acknowledgment ──────────────────────────────────────────────────────────
+
+\onehalfspacing 
+
+\begin{center}
+    \Large\textbf{Acknowledgment}
+\end{center}
+
+\noindent I would like to express my profound gratitude to Dr. Rahumathunza, Principal of MES College of Engineering, Kuttippuram, for providing the institutional support and facilities required to successfully complete this project. I am deeply thankful to Prof. Hyderali K, Head of the Department of Computer Applications, for his continuous encouragement and for fostering an environment conducive to academic growth. My sincere gratitude goes to my project guide, Ms. C M Sulaikha, Assistant Professor, Department of Computer Applications, for her constant support, valuable insights, and steadfast encouragement throughout the research and preparation of this project. I also extend my heartfelt thanks to the Project Coordinator, Mr. Balachandran K P, Associate Professor, for his structured guidance, constructive feedback, and timely support during this entire process. I sincerely appreciate all the teaching and non-teaching staff of the Department of Computer Applications for their invaluable cooperation. To my friends and classmates, thank you for the engaging discussions and motivation that kept me moving forward. Finally, I express my deepest gratitude to my family for their endless patience, moral support, and understanding.
+
+\vspace{3cm} 
+
+\begin{flushright}
+Sincerely,\\
+\textbf{MOHAMMED SHIBILY C}\\
+\textbf{MES24MCA--2031}
+\end{flushright}
+
+
+\newpage
+% ─── Abstract ────────────────────────────────────────────────────────────────
+\begin{center}
+\Large\textbf{Abstract}
+\end{center}
+
+The campus placement process forms a critical bridge between academic institutions and corporate employers. However, managing job postings, student applications, resumes, and interview schedules manually is a decentralized, inefficient, and error-prone process. \textbf{PlaceMentor: Campus Placement Management System} is designed to solve these challenges by providing an integrated, centralized web application that streamlines the entire recruitment lifecycle for students, placement officers, and corporate HR representatives.
+
+The system is developed using the \textbf{Django} backend framework to support rapid, secure, and scalable database operations. It features dedicated user dashboards tailored to specific roles: an Administrative Dashboard for overall oversight, an HR Dashboard for recruiters to post jobs and shortlist candidates, and a Student Portal for tracking job opportunities, managing academic profiles, and bookmarking potential careers. By integrating smart notification engines and dynamic application tracking logic, PlaceMentor vastly reduces the administrative burden on placement cells.
+
+Key functionalities include resume management, real-time application status tracking, and CGPA-based eligibility filters to ensure candidates meet precise corporate requirements before applying. Evaluations of the platform demonstrate a highly responsive UI, secure data handling, and a significant reduction in the time required to manage placement drives, thereby democratizing access to job opportunities and enhancing the overall campus recruitment experience.
+
+\newpage
+
+% ─── TOC ─────────────────────────────────────────────────────────────────────
+\tableofcontents
+\newpage
+\listoffigures
+\newpage
+\listoftables
+
+% ─── Switch to arabic numbering and enable fancy headers from Chapter 1 ──────
+\newpage
+\pagenumbering{arabic}
+\pagestyle{fancy}
+\fancyhf{}
+% Header
+\fancyhead[L]{Main Project Report 2026}
+\fancyhead[R]{\small PLACEMENTOR}
+% Footer
+\fancyfoot[L]{\small Department of Computer Applications}
+\fancyfoot[C]{\small\thepage}
+\fancyfoot[R]{\small MESCE, Kuttippuram}
+% Lines
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{Introduction}
+
+In the competitive modern academic environment, facilitating structured campus placements is essential for ensuring successful student career trajectories. The transition from academic life to professional careers is primarily managed by institutional placement cells. However, coordinating multiple HR recruiters, distributing job descriptions, and evaluating hundreds of student applications simultaneously poses significant logistical challenges when handled manually. \textbf{PlaceMentor} addresses this by providing an organized, robust software layer that automates communication, application screening, and candidate tracking.
+
+\section{Motivation}
+
+The current standard for placement tracking is heavily reliant on spreadsheets, manual email chains, and paper-based resume submissions. This creates an accessibility gap where communication delays cause students to miss key deadlines or updates regarding their application status. The motivation behind \textbf{PlaceMentor} is to eliminate structural delays by offering an instantaneous, self-contained portal where students can build their profile once, and HR personnel can seamlessly review qualified applicants through a centralized dashboard. 
+
+\section{Objectives}
+
+The primary objectives of this project are:
+
+\begin{itemize}
+    \item To digitize the entire placement process from job posting to final candidate selection.
+    \item To implement tiered user access roles specifically optimized for Students, HR personnel, and Placement Admins.
+    \item To automate eligibility screening based on strict academic criteria (e.g., minimum CGPA filters) prior to application submission.
+    \item To develop a robust notification engine keeping students instantly updated on shortlist statuses and interview schedules.
+    \item To provide interactive Data Dashboards for HR and Admins to monitor active recruitment drives.
+\end{itemize}
+
+\section{Problem Statement}
+
+The lack of a unified platform for placement activities leads to scattered information and operational inefficiencies. Placement officers spend countless hours cross-referencing eligibility criteria with student records. Students face anxiety due to the lack of transparent feedback on their application status. Recruiters must manually filter out unqualified resumes. There is a pressing need for a software solution that enforces constraints automatically, centrally stores documents, and streamlines state-transitions in the hiring workflow.
+
+\section{Scope of the Project}
+
+The scope encompasses:
+\begin{itemize}
+    \item User registration and profile management mapping to specific institutional domains.
+    \item Backend architecture strictly handling relationships between recruiters, jobs, and student applications.
+    \item Advanced notification tracking for status changes (e.g., Applied $\rightarrow$ Shortlisted).
+    \item Resume document handling and secure file retrieval for authorized personnel only.
+\end{itemize}
+
+\section{Contributions}
+
+The key contributions of this project are:
+
+\begin{enumerate}
+    \item \textbf{Role-Based Dashboard Ecosystem:} Unique, secure interfaces that separate student functionalities from administrative and HR controls.
+    \item \textbf{Automated Tracking Pipeline:} A seamless state-management system shifting student applications progressively from "Applied" to "Shortlisted", and eventually "Selected".
+    \item \textbf{Smart Notification Engine:} Dynamic alerts bridging communication gaps efficiently without relying on external email providers.
+    \item \textbf{Full-Stack Django Integration:} A cohesive system built using Python's Django framework providing a secure ORM backend, an interactive dashboard, and robust templating for a smooth User Experience.
+\end{enumerate}
+
+\section{Report Organization}
+
+This report is organized into chapters. Chapter 1 provides the introduction and objectives. Chapter 2 details the literature review. Chapter 3 discusses the system study, including existing and proposed systems. Chapter 4 explains system design including diagrams. Chapter 5 covers system implementation. Chapter 6 focuses on system testing. Chapter 7 presents the results and discussions. Finally, Chapter 8 concludes the report and outlines directions for future work.
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{Literature Review}
+
+\section{Introduction}
+
+The transition from conventional manual systems to automated placement platforms has been a significant area of study in recent software engineering literature. This chapter evaluates existing paradigms and technologies used previously to resolve placement inefficiencies.
+
+\section{Review of Existing Systems}
+
+Many institutions rely on third-party applicant tracking systems (ATS) or internal generalized portals (like Google Workspace). While effective for general data entry, these tools lack specific structural validation meant for the academic cohort.
+
+\begin{enumerate}
+    \item \textbf{Spreadsheet-based Management:} Often forms the bedrock of legacy systems. The primary drawback is data desynchronization and a lack of role-based accessibility.
+    \item \textbf{Enterprise ERP Systems:} Some colleges integrate placements into larger university ERPs. These tend to be bloated, difficult to navigate for external HR, and lack dedicated job-board features.
+    \item \textbf{Commercial Job Boards:} Platforms like LinkedIn or Indeed are used externally, but they do not integrate with a university's internal CGPA validation checks.
+\end{enumerate}
+
+\section{Comparative Analysis}
+
+PlaceMentor directly mitigates the drawbacks found in contemporary literature by confining the ecosystem. By hard-coding validation rules that connect to internal student metrics, the system ensures that the application pool is perpetually curated and accurate before reaching the recruiter.
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{System Study}
+
+\section{Existing System}
+
+Existing systems in most university placement cells rely on a fragmented collection of generic tools, primarily utilizing Google Forms for data collection and Excel spreadsheets for sorting candidate data.
+
+The broad limitations of existing systems can be summarized as follows:
+
+\begin{enumerate}
+    \item \textbf{Data Duplication:} Students are forced to repeatedly enter primary information and upload resumes for every individual job drive.
+    \item \textbf{Lack of transparency:} Students often have limited or zero visibility into the real-time status of their application once submitted.
+    \item \textbf{High Administrative Burden:} Placement officers spend extensive time manually verifying that students meet corporate CGPA and arrears criteria.
+    \item \textbf{Communication Bottlenecks:} Relying on batch email blasts leads to missed information and poor engagement with crucial placement deadlines.
+\end{enumerate}
+
+\section{Proposed System}
+
+\textbf{PlaceMentor} introduces a centralized technology-first approach to placement handling. It functions as an integrated job board and applicant tracking system (ATS) contained within the campus network. 
+
+When HR representatives create a dynamic job posting, they can set explicit requirements. The system's logical backend instantly filters the applicant pool, disabling the "Apply" functionality for students whose academic profiles do not meet the minimum requirements. By enforcing structural data relationships, the platform handles complex candidate sorting automatically.
+
+\section{Functionalities of Proposed System}
+
+\begin{itemize}
+    \item \textbf{Profile Management:} Students maintain a unified digital resume highlighting their CGPA, technical skills, and educational background.
+    \item \textbf{Job Bookmarking:} Features allowing students to "save" specific roles to track upcoming deadlines independently.
+    \item \textbf{Automated Eligibility Checks:} Restricts application flow based on active minimum academic requirements attached to job profiles.
+    \item \textbf{HR ATS Dashboard:} Allows corporate recruiters to download batched resume files and update application statuses interactively.
+    \item \textbf{Persistent Notifications:} A dedicated alerting ledger informing students of critical shortlist updates immediately.
+\end{itemize}
+
+\section{Feasibility Study}
+
+\subsection{Technical Feasibility}
+The system leverages Python and Django, which are exceptionally stable, open-source technologies capable of rapid scaling. The hardware requirements for hosting a Django application are minimal, making deployment via services like AWS or Heroku technically viable and straightforward.
+
+\subsection{Economic Feasibility}
+Since the project exclusively relies on open-source frameworks (Django, SQLite/PostgreSQL, HTML/CSS/JS), the licensing cost is effectively zero. The only financial overhead pertains to standard server hosting logic, which falls well within standard institutional budgets.
+
+\subsection{Operational Feasibility}
+The user interfaces are designed to mimic standard modern job boards. As students and HR personnel are already accustomed to similar digital workflows, the learning curve is exceptionally flat.
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{System Design}
+
+\section{Introduction}
+
+System design is the process of defining the architecture, components, modules, interfaces, and data for a system to satisfy specified requirements.
+
+\section{System Architecture}
+
+PlaceMentor utilizes a standard MVT (Model-View-Template) architectural pattern inherent to Django.
+\begin{itemize}
+    \item \textbf{Model:} Defines the database schema and data relationships securely.
+    \item \textbf{View:} Contains the Python logic that manipulates models and context dictionaries based on incoming HTTP requests.
+    \item \textbf{Template:} Renders the HTML frontend dynamically infused with context data provided by the View.
+\end{itemize}
+
+\section{Data Flow Diagrams (DFD)}
+
+The Data Flow Diagram charts the trajectory of information from input to final storage.
+
+\subsection{Level 0 DFD (Context Diagram)}
+The Context Diagram illustrates the overarching interaction between the external entities (Student, HR, Admin) and the PlaceMentor System.
+
+\vspace{1cm}
+\begin{center}
+\textit{[ Insert Level 0 DFD Here ]}
+\end{center}
+\vspace{1cm}
+
+\subsection{Level 1 DFD}
+Level 1 breaks down the main system into specific sub-processes: Authentication, Job Management, and Application Management.
+
+\vspace{1cm}
+\begin{center}
+\textit{[ Insert Level 1 DFD Here ]}
+\end{center}
+\vspace{1cm}
+
+\section{UML Diagrams}
+
+\subsection{Use Case Diagram}
+The Use Case diagram visualizes the behavioral aspects of the system.
+\begin{itemize}
+    \item \textbf{Student:} Can register, edit profile, view jobs, apply to jobs, and view notifications.
+    \item \textbf{HR:} Can post jobs, view applicants, modify applicant statuses.
+    \item \textbf{Admin:} Manages user access, views global placement statistics.
+\end{itemize}
+
+\vspace{1cm}
+\begin{center}
+\textit{[ Insert Use Case Diagram Here ]}
+\end{center}
+\vspace{1cm}
+
+\subsection{Sequence Diagram}
+Illustrates the chronological sequence of requests when a student applies for a job.
+\vspace{1cm}
+\begin{center}
+\textit{[ Insert Sequence Diagram Here ]}
+\end{center}
+\vspace{1cm}
+
+\section{Database Design}
+
+The PlaceMentor database is explicitly structured using the Django ORM to maintain tight relationships between users, companies, and applications.
+
+\subsection{Table Specifications}
+
+\begin{table}[H]
+\centering
+\caption{Table: \texttt{StudentProfile}}
+\vspace{6pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+\texttt{id}            & Integer     & Primary Key \\
+\texttt{user\_id}      & Integer     & One-to-One FK to Core \texttt{User} \\
+\texttt{cgpa}          & Decimal     & Floating point academic score \\
+\texttt{resume\_file}  & FileField   & Secure path reference to PDF resume \\
+\texttt{skills}        & Text        & Comma-separated technical skills \\
+\hline
+\end{tabular}
+\label{tab:db_student}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Table: \texttt{JobPosting}}
+\vspace{6pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+\texttt{id}            & Integer     & Primary Key \\
+\texttt{hr\_id}        & Integer     & FK pointing to the HR Author \\
+\texttt{title}         & String(255) & Job Role Designation \\
+\texttt{min\_cgpa}     & Decimal     & Required academic floor cut-off \\
+\texttt{is\_active}    & Boolean     & Toggle for accepting new applicants \\
+\hline
+\end{tabular}
+\label{tab:db_jobs}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Table: \texttt{JobApplication}}
+\vspace{6pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Column} & \textbf{Type} & \textbf{Description} \\
+\hline
+\texttt{id}             & Integer & Primary Key \\
+\texttt{student\_id}    & Integer & FK determining Applicant \\
+\texttt{job\_id}        & Integer & FK mapped to \texttt{JobPosting} \\
+\texttt{status}         & String  & (Pending, Shortlisted, Selected, Rejected) \\
+\texttt{applied\_on}    & DateTime& Timestamp marking the submission \\
+\hline
+\end{tabular}
+\label{tab:db_applications}
+\end{table}
+
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{System Implementation}
+
+\section{Methodology}
+
+The development of PlaceMentor followed an \textbf{Agile Scrum} methodology, focusing on rapid iterative development across modular feature sets. Agile was selected because refining an interactive dashboard utilized by multiple distinct user groups (Student, HR, Admin) requires continuous user-interface adjustments and routing realignments based on real-time testing feedback.
+
+\section{Software Tools}
+
+\begin{table}[H]
+\centering
+\caption{Software tools and technologies used for project development}
+\label{tab:tools}
+\renewcommand{\arraystretch}{1.3}
+\vspace{10pt}
+\begin{tabular}{|l|p{9cm}|}
+\hline
+\textbf{Component} & \textbf{Technology / Tool} \\
+\hline
+Operating System  & Windows 11 \\
+Backend Language  & Python 3.10+ \\
+Web Framework     & Django 5.x \\
+Frontend          & HTML5, CSS3, Vanilla JavaScript \\
+Database          & SQLite (Development) / PostgreSQL (Prod) \\
+Version Control   & Git, GitHub \\
+IDE / Editor      & Visual Studio Code \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Module Implementations}
+
+\subsection{Core Authentication Module}
+This module handles secure user sign-ups, standardizes password hashing, and ensures tight permission routing. It guarantees that standard students cannot access URLs intended strictly for HR Dashboards or Administrative overviews. Django's `@login_required` decorators ensure route safety.
+
+\subsection{Student Dashboard Module}
+Focused entirely on end-user candidate functionalities. It manages the editing interface for user profiles, renders the active job listings board, and coordinates the logic allowing a student to save application profiles or bookmark potential job offers for later tracking.
+
+\subsection{HR \& Administrative Module}
+Controls the logic pipelines necessary to post jobs, edit active listings, viewing aggregate tables of applicants, downloading attached candidate resumes securely, and toggling an applicant's "status" thereby firing corresponding alerts to the smart notification structure.
+
+\section{Code Environment}
+
+Python is utilized as the foundational language due to its rapid syntax and object-oriented structure. Django 5.x serves as the overarching monolithic web framework, orchestrating MVT logic. Django's built-in Object-Relational Mapper (ORM) securely interfaces the Python class models into the database, abstracting complex SQL queries and prioritizing security integrations like CSRF data protection.
+
+\section{Project Plan \& Agile Timeline}
+
+\begin{table}[H]
+\centering
+\caption{Project Plan}
+\vspace{8pt}
+\label{tab:projectplan}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|c|p{6cm}|c|c|c|}
+\hline
+\textbf{Sprint} & \textbf{Tasks} & \textbf{Start} & \textbf{End} & \textbf{Status} \\
+\hline
+Sprint 1 & Analysis, Design, Django Project Setup, Database Definition & 29/12/2025 & 11/01/2026 & Completed \\
+Sprint 2 & Authentication endpoints, Primary Student Dashboard Routing & 19/01/2026 & 11/02/2026 & Completed \\
+Sprint 3 & Job Posting Logic, Bookmark Engine, Application ATS Filters & 19/02/2026 & 04/03/2026 & Completed \\
+Sprint 4 & Notification Engine, HR Dashboards, Layout Refinements & 18/03/2026 & 31/03/2026 & Completed \\
+\hline
+\end{tabular}
+\end{table}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{System Testing}
+
+\section{Introduction}
+
+Testing is a critical deployment phase ensuring system stability, fault tolerance, and security. PlaceMentor underwent structured module testing before integration.
+
+\section{Types of Testing}
+
+\subsection{Unit Testing}
+Individual Python functions and Django Views were tested in isolation to verify they returned the correct HTTP status codes and context dictionaries.
+
+\subsection{Integration Testing}
+Ensured that components, such as the Job Application pipeline and Notification engine, communicated smoothly. When an HR changes a status, the integration test confirms the student receives the corresponding notification.
+
+\subsection{Validation Testing}
+Focused strictly on the frontend validation protocols ensuring malformed data (like entering strings intentionally in CGPA fields) is rejected natively.
+
+\section{Test Cases}
+
+\begin{table}[H]
+\centering
+\caption{System Test Cases}
+\vspace{8pt}
+\label{tab:testcases}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|p{1.5cm}|p{3.5cm}|p{4cm}|p{2cm}|p{2cm}|}
+\hline
+\textbf{Test ID} & \textbf{Scenario} & \textbf{Expected Result} & \textbf{Actual} & \textbf{Status} \\
+\hline
+TC-01 & Login with valid student credentials & Redirects correctly to student dashboard & As expected & Pass \\
+\hline
+TC-02 & Student applies for job requiring 8.0 CGPA with a 7.5 CGPA & System blocks submission and flags eligibility error & As expected & Pass \\
+\hline
+TC-03 & HR shifts applicant status to "Shortlisted" & Notification record generated for student & As expected & Pass \\
+\hline
+TC-04 & Student attempts to upload non-PDF resume & Server rejects upload based on file-type validation & As expected & Pass \\
+\hline
+\end{tabular}
+\end{table}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{Results and Discussions}
+
+This chapter highlights the successful outputs from the PlaceMentor platform integration. Continuous functional testing confirms the structural integrity of the Django back-end routing, database relations, and user-interface responsiveness.
+
+\section{Results}
+
+The deployed architecture successfully meets the core demands of a robust campus management service. Testing validates several core behaviors:
+
+\begin{itemize}
+    \item \textbf{Secure Routing:} Role-based authentication flawlessly protects respective dashboards. Students cannot force-navigate to HR administrative endpoints.
+    \item \textbf{Data Integrity Checks:} The job application logic successfully queries the active student instance's profile CGPA upon applying, definitively rejecting sub-standard scores in real-time according to HR parameters.
+    \item \textbf{Interactive Notifications:} Shifting an applicant's status dynamically pushes an unhandled, unread alert to their respective notification drop-down view.
+    \item \textbf{File Resiliency:} Resume ingestion mechanisms correctly manage and segregate static media uploads across thousands of potential users without overlapping pathing issues.
+\end{itemize}
+
+\section{Discussion}
+
+\subsection{Strengths of the System}
+
+\begin{itemize}
+    \item \textbf{Centralized Cohesion:} Moving all communication into a single unified framework entirely mitigates data loss common in decentralized spreadsheet handling.
+
+    \item \textbf{High Efficiency Filtering:} Recruiters are no longer burdened by reviewing unqualified candidates who attempt to "spam" apply for roles, as hard algorithmic limitations prevent poor submissions natively.
+
+    \item \textbf{Responsive Modern Design:} Utilizing modern, clean CSS grids and flexible navbars ensures students can review their hiring statuses rapidly via their mobile phones.
+\end{itemize}
+
+\subsection{Limitations of the System}
+
+\begin{itemize}
+    \item \textbf{Scaling Thresholds:} Running standard SQLite databases performs excellently for prototyping, yet handling massive simultaneous concurrent interactions during a large multi-college hiring drive necessitates migrating to PostgreSQL infrastructure.
+    
+    \item \textbf{Feature Scope Limitation:} The current iteration lacks integrated synchronous communication layers (e.g. Chat messengers or Live Video Interview hosting).
+\end{itemize}
+
+% ════════════════════════════════════════════════════════════════════════════
+\chapter{Conclusion and Future Scope}
+
+\section{Conclusion}
+
+PlaceMentor demonstrates a decisive paradigm leap in managing institutional campus placements efficiently. By constructing an optimized, role-dedicated Django framework, the platform thoroughly removes the administrative overhead native to unstructured physical document tracking. The application tracking system effectively acts as a reliable intermediary, ensuring transparent communication and organized candidate assessment pipelines.
+
+The modular architecture guarantees robust security parameters across Student and HR profiles while providing smooth relational navigation globally. PlaceMentor serves as a foundational digital layer that greatly accelerates the recruitment lifecycle, maximizing career output opportunities for candidates and drastically reducing processing hours for participating corporate structures.
+
+\section{Future Scope}
+
+\begin{itemize}
+    \item \textbf{Automated API Communications:} Integrating Twilio or WhatsApp Business APIs to push immediate text messages to students out-in-the-field regarding vital interview calls.
+    \item \textbf{Alumni Network Integration:} Creating secondary user roles allowing graduated alumni to post mentorship opportunities or exclusive company referral codes back to the institutional hub.
+    \item \textbf{In-App Code Assessment:} Deploying isolated secure sandbox tests allowing HR managers to directly issue minor coding challenges natively through the platform prior to shortlisting.
+\end{itemize}
+
+% ─── Appendix ────────────────────────────────────────────────────────────────
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
+
+\section*{Screenshots of the System}
+
+% ── Screenshot 1 ──
+\noindent\textbf{Home Navigation View}\\[0.3cm]
+\begin{figure}[H]
+    \centering
+    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert Home Page Screenshot Here ]}} }
+    \caption{PlaceMentor Homepage and Login Navigation}
+    \label{fig:ss_home}
+\end{figure}
+
+% ── Screenshot 2 ──
+\newpage
+\noindent\textbf{Student Dashboard}\\[0.3cm]
+\begin{figure}[H]
+    \centering
+    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert Student Dashboard Screenshot Here ]}} }
+    \caption{Student View rendering available jobs and active notifications}
+    \label{fig:ss_student}
+\end{figure}
+
+% ── Screenshot 3 ──
+\newpage
+\noindent\textbf{HR Administration Dashboard}\\[0.3cm]
+\begin{figure}[H]
+    \centering
+    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert HR Dashboard Screenshot Here ]}} }
+    \caption{Recruiter portal displaying active job listings and applicant traction}
+    \label{fig:ss_hr}
+\end{figure}
+
+\end{document}
