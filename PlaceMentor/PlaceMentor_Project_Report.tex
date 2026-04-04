@@ -19,6 +19,7 @@
 \usepackage{array}
 \usepackage{longtable}
 \usepackage{hyperref}
+\usepackage{microtype} % Automatically fixes character widths to prevent text from going out of margins
 
 \hypersetup{
     colorlinks=true,
@@ -36,6 +37,7 @@
 \definecolor{accentblue}{RGB}{30,100,200}
 
 % ─── Code listing style ──────────────────────────────────────────────────────
+% ─── Clean Academic Code Listing Style ───────────────────────────────────────
 \lstset{
     language=Python,
     basicstyle=\ttfamily\small,
@@ -43,9 +45,9 @@
     commentstyle=\itshape\color{commentcolor},
     stringstyle=\ttfamily\color{stringcolor},
     breaklines=true,
-    frame=none,
-    backgroundcolor={},
-    numbers=left,
+    frame=none,          % This removes the box completely
+    backgroundcolor={},  % This removes the grey background
+    numbers=left,        % Keeps line numbers on the left
     numberstyle=\tiny\color{black},
     showstringspaces=false,
     tabsize=4,
@@ -55,6 +57,7 @@
 
 % ════════════════════════════════════════════════════════════════════════════
 \begin{document}
+\sloppy % Allows slightly more flexible spacing to prevent text from spilling into margins
 
 % ─── Title Page ──────────────────────────────────────────────────────────────
 \begin{titlepage}
@@ -85,11 +88,11 @@ BY
 \textbf{MOHAMMED SHIBILY C}\\
 MES24MCA--2031
 
-\vspace{0.8cm}
+\vspace{0.6cm}
 
 \includegraphics[width=4.5cm]{mes.jpeg}
 
-\vspace{0.8cm}
+\vspace{0.6cm}
 
 \textbf{DEPARTMENT OF COMPUTER APPLICATIONS}\\
 MES COLLEGE OF ENGINEERING\\
@@ -107,6 +110,7 @@ April 2026
 \begin{center}
 \Large\textbf{Declaration}
 \end{center}
+\vspace{1cm}
 
 \onehalfspacing
 I undersigned hereby declare that the project report \textbf{PLACEMENTOR: CAMPUS PLACEMENT MANAGEMENT SYSTEM} submitted for partial fulfilment of the requirements for the award of degree of Master of Computer Applications of the APJ Abdul Kalam Technological University, Kerala, is a bonafide work done by me under supervision of \textbf{Ms. C M Sulaikha}, Assistant Professor, Department of Computer Applications. This submission represents my ideas in my own words and where ideas or words of others have been included, I have adequately and accurately cited and referenced the original sources. I also declare that I have adhered to ethics of academic honesty and integrity and have not misrepresented or fabricated any data or idea or fact or source in my submission. I understand that any violation of the above will be a cause for disciplinary action by the institute and/or the University and can also evoke penal action from the sources which have thus not been properly cited or from whom proper permission has not been obtained. This report has not been previously formed the basis for the award of any degree, diploma or similar title of any other University.
@@ -128,9 +132,9 @@ MES24MCA--2031
 \textbf{KUTTIPPURAM, KERALA -- 679 582}\\[0.2cm]
 \small
 (A NAAC ACCREDITED INSTITUTION WITH NBA ACCREDITED DEPARTMENTS,\\
-APPROVED BY AICTE AND AFFILIATED TO APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY )\\[1cm]
-\includegraphics[width=110pt, height=110pt]{mes.jpeg}\\[1cm]
-\textbf{\large DEPARTMENT OF COMPUTER APPLICATIONS}\\[1cm]
+APPROVED BY AICTE AND AFFILIATED TO APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY )\\[0.5cm]
+\includegraphics[width=110pt, height=110pt]{mes.jpeg}\\[0.5cm]
+\textbf{\large DEPARTMENT OF COMPUTER APPLICATIONS}\\[0.5cm]
 \textbf{\Large CERTIFICATE}\\[0.5cm]
 \end{center}
 
@@ -138,11 +142,11 @@ APPROVED BY AICTE AND AFFILIATED TO APJ ABDUL KALAM TECHNOLOGICAL UNIVERSITY )\\
 \noindent
 This is to certify that the project report entitled \textbf{PLACEMENTOR: CAMPUS PLACEMENT MANAGEMENT SYSTEM} is a bonafide record of the Main Project work during the academic year 2025--26 carried out by \textbf{MOHAMMED SHIBILY C (MES24MCA--2031)}, submitted to the APJ Abdul Kalam Technological University, in partial fulfilment of the requirements for the award of \textit{Degree of Master of Computer Applications} under \textit{APJ Abdul Kalam Technological University}, under my guidance and supervision. This report in any form has not been submitted to any other University or Institution for any purpose.
 
-\vspace{2.5cm}
+\vspace{1.5cm}
 
 \begin{tabular}{p{7cm} p{7cm}}
-Internal Supervisor(s) & External Supervisor(s) \\[3cm]
-External Examiner & Head of the Department \\
+Internal Supervisor(s) & Head of the Department \\[3cm]
+Examiner(s) & \\
 \end{tabular}
 
 \pagenumbering{roman}
@@ -155,6 +159,7 @@ External Examiner & Head of the Department \\
 \begin{center}
     \Large\textbf{Acknowledgment}
 \end{center}
+\vspace{1cm}
 
 \noindent I would like to express my profound gratitude to \textbf{Dr. Rahumathunza}, Principal of MES College of Engineering, Kuttippuram, for providing the institutional support and facilities required to successfully complete this project. I am deeply thankful to \textbf{Prof. Hyderali K.}, Head of the Department of Computer Applications, for his continuous encouragement and for fostering an environment conducive to academic growth. My sincere gratitude goes to my project guide, \textbf{Ms. C M Sulaikha}, Assistant Professor, Department of Computer Applications, for her constant support, valuable insights, and steadfast encouragement throughout the research and preparation of this project. I also extend my heartfelt thanks to the Project Coordinator, \textbf{Mr. Balachandran K P}, Associate Professor, for his structured guidance, constructive feedback, and timely support during this entire process. I sincerely appreciate all the teaching and non-teaching staff of the Department of Computer Applications for their invaluable cooperation. To my friends and classmates, thank you for the engaging discussions and motivation that kept me moving forward. Finally, I express my deepest gratitude to my family for their endless patience, moral support, and understanding.
 
@@ -172,6 +177,7 @@ Sincerely,\\
 \begin{center}
 \Large\textbf{Abstract}
 \end{center}
+\vspace{1cm}
 
 The campus placement process forms a critical bridge between academic institutions and corporate employers. However, managing job postings, student applications, resumes, and interview schedules manually is a decentralized, inefficient, and error-prone process. \textbf{PlaceMentor: Campus Placement Management System} is designed to solve these challenges by providing an integrated, centralized web application that streamlines the entire recruitment lifecycle for students, placement officers, and corporate HR representatives.
 
@@ -285,6 +291,8 @@ PlaceMentor is constructed using a robust, modern full-stack web ecosystem built
 
 \begin{table}[H]
 \centering
+\caption{Software tools and technologies}
+\label{tab:tools}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|>{\centering\arraybackslash}p{9cm}|}
 \hline
@@ -300,8 +308,6 @@ IDE               & Visual Studio Code \\
 Version Control   & Git, GitHub \\
 \hline
 \end{tabular}
-\caption{Software tools and technologies}
-\label{tab:tools}
 \end{table}
 
 \subsection{Python and Django Framework}
@@ -352,9 +358,11 @@ The database schema emphasizes relational integrity. Utilizing SQL Foreign Keys,
 
 \subsection{Table Specifications}
 
-\subsubsection*{CustomUser}
+\subsubsection*{Table: \texttt{CustomUser}}
 \begin{table}[H]
 \centering
+\caption{Collection Configuration: \texttt{CustomUser}}
+\label{tab:col_users}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|c|>{\centering\arraybackslash}p{7.5cm}|}
 \hline
@@ -369,13 +377,13 @@ The database schema emphasizes relational integrity. Utilizing SQL Foreign Keys,
 \texttt{is\_active}     & Boolean        & Account disable switch \\
 \hline
 \end{tabular}
-\caption{Collection Configuration: \texttt{CustomUser}}
-\label{tab:col_users}
 \end{table}
 
-\subsubsection*{CandidateProfile}
+\subsubsection*{Table: \texttt{CandidateProfile}}
 \begin{table}[H]
 \centering
+\caption{Collection Configuration: \texttt{CandidateProfile}}
+\label{tab:col_students}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|c|>{\centering\arraybackslash}p{7.5cm}|}
 \hline
@@ -391,13 +399,13 @@ The database schema emphasizes relational integrity. Utilizing SQL Foreign Keys,
 \texttt{mobile}        & String         & Contact telephone number \\
 \hline
 \end{tabular}
-\caption{Collection Configuration: \texttt{CandidateProfile}}
-\label{tab:col_students}
 \end{table}
 
-\subsubsection*{JobPosting}
+\subsubsection*{Table: \texttt{JobPosting}}
 \begin{table}[H]
 \centering
+\caption{Collection Configuration: \texttt{JobPosting}}
+\label{tab:col_jobs}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|c|>{\centering\arraybackslash}p{7.5cm}|}
 \hline
@@ -414,13 +422,13 @@ The database schema emphasizes relational integrity. Utilizing SQL Foreign Keys,
 \texttt{created\_at}  & DateTime       & DB timestamp denoting record birth \\
 \hline
 \end{tabular}
-\caption{Collection Configuration: \texttt{JobPosting}}
-\label{tab:col_jobs}
 \end{table}
 
-\subsubsection*{JobApplication}
+\subsubsection*{Table: \texttt{JobApplication}}
 \begin{table}[H]
 \centering
+\caption{Collection Configuration: \texttt{JobApplication}}
+\label{tab:col_apps}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|c|>{\centering\arraybackslash}p{7.5cm}|}
 \hline
@@ -433,8 +441,6 @@ The database schema emphasizes relational integrity. Utilizing SQL Foreign Keys,
 \texttt{applied\_at} & DateTime & Timestamp when application submitted \\
 \hline
 \end{tabular}
-\caption{Collection Configuration: \texttt{JobApplication}}
-\label{tab:col_apps}
 \end{table}
 
 \section{Module Description}
@@ -453,6 +459,8 @@ Functioning as an Applicant Tracking System (ATS), this module allows corporate 
 
 \begin{table}[H]
 \centering
+\caption{User Stories}
+\label{tab:userstory}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|c|>{\centering\arraybackslash}p{5cm}|>{\centering\arraybackslash}p{5cm}|}
 \hline
@@ -465,14 +473,14 @@ Functioning as an Applicant Tracking System (ATS), this module allows corporate 
 5 & Plcmt Officer & View a generalized digital job board & Maintains oversight over active campus placement drives \\
 \hline
 \end{tabular}
-\caption{User Stories}
-\label{tab:userstory}
 \end{table}
 
 \section{Product Backlog}
 
 \begin{table}[H]
 \centering
+\caption{Product Backlog}
+\label{tab:backlog}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|>{\centering\arraybackslash}p{8cm}|c|c|}
 \hline
@@ -487,8 +495,6 @@ Functioning as an Applicant Tracking System (ATS), this module allows corporate 
 7 & Interactive UI/UX utilizing CSS Grid/Flexbox Implementations               & Medium   & Completed \\
 \hline
 \end{tabular}
-\caption{Product Backlog}
-\label{tab:backlog}
 \end{table}
 
 
@@ -496,6 +502,8 @@ Functioning as an Applicant Tracking System (ATS), this module allows corporate 
 
 \begin{table}[H]
 \centering
+\caption{Project Plan}
+\label{tab:projectplan}
 \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|c|>{\centering\arraybackslash}p{6cm}|c|c|c|}
 \hline
@@ -510,8 +518,6 @@ Sprint 3 & Job Posting Views, Resume Handling, Application ATS Validation Filter
 Sprint 4 & Notification Generator Engine, User Interface Styling \& Refinements & 18/03/2026 & 31/03/2026 & Completed \\
 \hline
 \end{tabular}
-\caption{Project Plan}
-\label{tab:projectplan}
 \end{table}
 
 
@@ -519,8 +525,11 @@ Sprint 4 & Notification Generator Engine, User Interface Styling \& Refinements 
 
 The sprint plan details each backlog item's completion date, estimated hours, and the day-by-day effort distribution across all four 14-day sprints. Day columns (D1--D14) represent individual working days within each sprint; values denote hours worked on that task on that day. The total estimated project effort is \textbf{360 hours}.
 
+% -- Sprint 1 & 2 --
 \begin{table}[H]
 \centering
+\caption{Sprint Plan -- Sprints 1 \& 2}
+\label{tab:sprint12}
 \vspace{6pt}
 \renewcommand{\arraystretch}{1.35}
 \resizebox{\textwidth}{!}{%
@@ -537,11 +546,11 @@ The sprint plan details each backlog item's completion date, estimated hours, an
 
 \multicolumn{17}{|c|}{\textbf{SPRINT 1}} \\
 \hline
-Requirement Analysis & 31/12/2025 & 20 & 7 & 7 & 6 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+Requirement Analysis & 31/12/2025 & 20 & 7 & 7 & 6 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 \hline
-System Design & 03/01/2026 & 20 & 0 & 0 & 5 & 5 & 5 & 5 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+System Design & 03/01/2026 & 20 & 0 & 0 & 5 & 5 & 5 & 5 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 \hline
-Django Setup      & 07/01/2026 & 25 & 0 & 0 & 0 & 0 & 0 & 5 & 5 & 5 & 5 & 5 & 0 & 0 & 0 \\
+Django Setup      & 07/01/2026 & 25 & 0 & 0 & 0 & 0 & 0 & 5 & 5 & 5 & 5 & 5 & 0 & 0 & 0 & 0 \\
 \hline
 Database Models & 11/01/2026 & 25 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 5 & 5 & 5 & 5 & 5 \\
 \hline
@@ -559,8 +568,11 @@ CSS Styling Base     & 11/02/2026 & 25 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 5 &
 }
 \end{table}
 
+% -- Sprint 3 & 4 --
 \begin{table}[H]
 \centering
+\caption{Sprint Plan -- Sprints 3 \& 4 with Total}
+\label{tab:sprint34}
 \renewcommand{\arraystretch}{1.35}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{|>{\centering\arraybackslash}p{3.2cm}|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
@@ -601,8 +613,6 @@ Testing \& Docs & 31/03/2026 & 30 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 6 & 6 & 
 
 \end{tabular}%
 }
-\caption{Sprint Plan -- Sprints 3 \& 4 with Total}
-\label{tab:sprint345}
 \end{table}
 
 % ════════════════════════════════════════════════════════════════════════════
@@ -615,6 +625,13 @@ This chapter highlights the successful outputs from the PlaceMentor platform int
 \subsection{Algorithmic Filtering Integrity}
 The mathematical implementations defining academic checkpoints behaved flawlessly under simulated mass-applications testing. Upon attempting to submit queries referencing user IDs with cumulative grade metrics beneath HR designations, the system consistently returned mathematical failure cascades, prohibiting redundant DB rows natively and preserving ATS query clarity. Thus, Equation \ref{eq:cgpa_check} functioned robustly under realistic system stress.
 
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.7\textwidth]{test_results_chart.png}}
+    \caption{System Performance Metrics and Filtering Results}
+    \label{fig:algorithmic_filtering}
+\end{figure}
+
 \subsection{Web Application Responses}
 The full-stack application was deployed against a suite of functional interactions. 
 \begin{itemize}
@@ -622,6 +639,13 @@ The full-stack application was deployed against a suite of functional interactio
     \item \textbf{Role Segregation:} Security tests confirmed that simulated Student accounts attempting to execute GET requests on \texttt{/hr-dashboard} views received immutable HTTP 403 Forbidden redirects, thereby preserving data integrity.
     \item \textbf{Static File Management:} Resume uploading mechanisms correctly parse, namespace, and save large PDF binaries into static file storage securely, segregating them correctly against individual profile UUID definitions.
 \end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.9\textwidth]{dashboard.png}}
+    \caption{Web Application interfaces functioning under deployment}
+    \label{fig:web_response}
+\end{figure}
 
 \section{Discussions}
 
@@ -681,17 +705,20 @@ K. Schwaber and J. Sutherland, \textit{The Scrum Guide}, 2020. [Online]. Availab
 
 
 % ─── Appendix ────────────────────────────────────────────────────────────────
+\newpage
 \appendix
 \chapter{Process Flow Diagrams}
+\addcontentsline{toc}{chapter}{Appendix A: Process Flow Diagrams}
 Figure \ref{fig:clinical_flow} illustrates the end-to-end interactive job tracking loop within the PlaceMentor platform, spanning from initial HR logic formulations to final state conclusions.
 
 \begin{figure}[H]
 \centering
+\scalebox{0.7}{
 \begin{tikzpicture}[
     node distance=0.8cm and 1.2cm,
     box/.style={rectangle, rounded corners=4pt, draw=accentblue,
-                fill=blue!6, text width=6cm, align=center,
-                minimum height=0.9cm, font=\small},
+                fill=blue!6, text width=8cm, align=center,
+                minimum height=1.0cm, font=\small},
     arr/.style={-Stealth, thick, color=accentblue}
 ]
 \node[box] (A) {HR Representative Posts Job};
@@ -717,12 +744,15 @@ Figure \ref{fig:clinical_flow} illustrates the end-to-end interactive job tracki
 \draw[arr] (I) -- (J);
 \draw[arr] (J) -- (K);
 \end{tikzpicture}
+}
 \caption{End-to-end recruitment process loop in PlaceMentor}
 \label{fig:clinical_flow}
 \end{figure}
 
 % ------------------------------------------------------------------------------
+\newpage
 \chapter{System Architecture Diagram}
+\addcontentsline{toc}{chapter}{Appendix B: System Architecture Diagram}
 Figure \ref{fig:arch} details the Model-View-Template internal framework operating beneath the Django ecosystem.
 
 \begin{figure}[H]
@@ -760,7 +790,9 @@ Figure \ref{fig:arch} details the Model-View-Template internal framework operati
 
 
 % ------------------------------------------------------------------------------
+\newpage
 \chapter{Source Code Listings}
+\addcontentsline{toc}{chapter}{Appendix C: Source Code Listings}
 
 \subsection*{Django Logical Eligibility View}
 \texttt{placementor/home/views.py}
@@ -818,33 +850,47 @@ def create_state_notification(sender, instance, created, **kwargs):
     if not created: 
         Notification.objects.create(
             user=instance.applicant,
-            message=f"Interaction Logged: Your ATS tracker status for {instance.job.title} updated to: {instance.status}"
+            message=f"Interaction Logged: Your Status for {instance.job.title} updated to: {instance.status}"
         )
 \end{lstlisting}
 
-\chapter{Screenshots}
+\newpage
+\chapter{Screenshots} % Appendix D
+\addcontentsline{toc}{chapter}{Appendix D: Screenshots}
 
-\noindent\textbf{Home Authentocastion}\\[0.3cm]
+\noindent\textbf{Home Authentication}\\[0.3cm]
 \begin{figure}[H]
     \centering
-    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert Home Page Screenshot Here ]}} }
+    \fbox{\includegraphics[width=0.85\textwidth]{login.png}}
     \caption{PlaceMentor authentication endpoints interface}
-    \label{dashboard}
+    \label{fig:screenshot_home}
 \end{figure}
 
+\newpage
 \noindent\textbf{Student User UI Board}\\[0.3cm]
 \begin{figure}[H]
     \centering
-    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert Student Dashboard Screenshot Here ]}} }
+    \fbox{\includegraphics[width=0.85\textwidth]{viewjobs.png}}
     \caption{Data table showcasing visible campus placement drives}
-    \label{jobs}
+    \label{fig:screenshot_jobs}
 \end{figure}
 
+\newpage
+\noindent\textbf{HR Portal ATS}\\[0.3cm]
 \begin{figure}[H]
     \centering
-    \fbox{ \rule{0pt}{7cm} \rule{12cm}{0pt}  \raisebox{3.5cm}{\textit{[ Insert HR Portal Screenshot Here ]}} }
+    \fbox{\includegraphics[width=0.85\textwidth]{hrdashboard.png}}
     \caption{HR ATS logic managing applicants}
-    \label{ats}
+    \label{fig:screenshot_ats}
+\end{figure}
+
+\newpage
+\noindent\textbf{Notification System}\\[0.3cm]
+\begin{figure}[H]
+    \centering
+    \fbox{\includegraphics[width=0.85\textwidth]{notifications.png}}
+    \caption{Asynchronous student alert functionality}
+    \label{fig:screenshot_notification}
 \end{figure}
 
 \end{document}
