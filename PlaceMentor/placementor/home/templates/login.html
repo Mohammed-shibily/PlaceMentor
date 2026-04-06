@@ -3,44 +3,72 @@
 
 {% block title %}Student Login | PlaceMentor{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+  .auth-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background:
+      radial-gradient(ellipse 70% 50% at 10% 10%, rgba(20,184,166,.08) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 90% 90%, rgba(212,175,55,.06) 0%, transparent 55%);
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 460px;
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="container py-5 animate__animated animate__zoomIn">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div
-                class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg text-center">
-                <div class="logo-icon mx-auto mb-4" style="width: 60px; height: 60px; font-size: 1.5rem;">PC</div>
-                <h1 class="fw-bold text-light mb-1">Student <span class="text-gold">Login</span></h1>
-                <p class="text-muted mb-5">Welcome back to your career hub.</p>
+<div class="auth-page animate__animated animate__fadeIn">
+  <div class="auth-card">
+    <div class="glass-panel position-relative overflow-hidden p-4 p-md-5">
+      <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 50% 0%, rgba(13,148,136,.18) 0%, transparent 55%); z-index: 0;"></div>
+      <div class="position-relative" style="z-index: 1;">
 
-                <form method="POST" action="{% url 'studlogin' %}">
-                    {% csrf_token %}
-                    <div class="mb-4 text-start">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
-                        <input type="email" name="email"
-                            class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-                            placeholder="email@example.com" required>
-                    </div>
-                    <div class="mb-5 text-start">
-                        <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
-                        <input type="password" name="password"
-                            class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-                            placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5">Login Now</button>
-
-                    <div class="mt-4 text-muted small">
-                        Don't have an account? <a href="{% url 'studregister' %}"
-                            class="text-gold text-decoration-none">Register here</a>
-                    </div>
-                </form>
-            </div>
-
-            <div class="text-center mt-5">
-                <p class="text-muted small">Are you an employer? <a href="{% url 'hrlogin' %}"
-                        class="text-teal text-decoration-none fw-bold">HR Login</a></p>
-            </div>
+        <!-- Header -->
+        <div class="text-center mb-5">
+          <div class="mx-auto mb-4 d-flex align-items-center justify-content-center fw-bold" style="width: 62px; height: 62px; font-size: 1.4rem; background: rgba(13,148,136,.15); border: 1px solid var(--teal); border-radius: 16px; color: var(--teal-light);">PC</div>
+          <h1 class="fw-bold mb-1">Student <span class="shimmer-text">Login</span></h1>
+          <p class="text-white-50 mb-0">Welcome back to your career hub.</p>
         </div>
+
+        <!-- Django Messages -->
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert text-center mb-4 py-2" style="background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: #f87171; border-radius: 10px; font-size: .85rem;">
+            {{ message }}
+          </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
+        <form method="POST" action="{% url 'studlogin' %}">
+          {% csrf_token %}
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Email Address</label>
+            <input type="email" name="email" class="form-control premium-input py-3" placeholder="email@example.com" required>
+          </div>
+          <div class="mb-5">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Password</label>
+            <input type="password" name="password" class="form-control premium-input py-3" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn-premium btn-teal-gradient w-100 py-3 fw-bold fs-5 border-0" style="border-radius: 12px;">Login Now</button>
+
+          <div class="text-center mt-4 text-white-50 small">
+            Don't have an account? <a href="{% url 'studregister' %}" class="text-gold text-decoration-none">Register here</a>
+          </div>
+        </form>
+      </div>
     </div>
+
+    <div class="text-center mt-4">
+      <p class="text-white-50 small mb-0">Are you an employer? <a href="{% url 'hrlogin' %}" class="text-teal text-decoration-none fw-bold">HR Login →</a></p>
+    </div>
+  </div>
 </div>
 {% endblock %}

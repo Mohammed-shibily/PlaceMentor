@@ -134,6 +134,90 @@
     opacity: 0; transition: transform .35s cubic-bezier(.4,0,.2,1), opacity .35s;
   }
   .pipeline-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ── Schedule Interview Button (Shortlisted only) ── */
+  .btn-schedule {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 7px 14px; flex: 1 1 auto;
+    background: linear-gradient(135deg, #0d9488, #2dd4bf);
+    color: #fff !important; font-size: .8rem; font-weight: 700;
+    border-radius: 8px; border: none; cursor: pointer;
+    text-decoration: none !important;
+    transition: transform .2s ease, box-shadow .2s ease;
+    white-space: nowrap;
+  }
+  .btn-schedule:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(13,148,136,.4);
+    color: #fff !important;
+  }
+  .btn-schedule:active { transform: translateY(0); }
+
+  /* ── Interview Scheduled Badge (on card header) ── */
+  .interview-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.3);
+    color: #10b981; border-radius: 20px; padding: 3px 10px;
+    font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+    margin-top: 6px; white-space: nowrap;
+  }
+  .interview-badge i { font-size: .65rem; }
+
+  /* Success toast variant */
+  .pipeline-toast.success { background: rgba(16,185,129,.95); }
+  .pipeline-toast.error   { background: rgba(239,68,68,.95); }
+
+  /* ── Interview Tooltip ── */
+  .interview-tooltip-trigger { position: relative; cursor: default; }
+
+  .interview-tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 0;
+    min-width: 220px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(16,185,129,.35);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.55), 0 0 0 1px rgba(16,185,129,.1);
+    z-index: 9999;
+    backdrop-filter: blur(12px);
+    pointer-events: all;
+  }
+
+  /* Arrow */
+  .interview-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 16px;
+    border: 6px solid transparent;
+    border-top-color: rgba(16,185,129,.35);
+  }
+
+  .interview-tooltip-trigger:hover .interview-tooltip { display: block; }
+
+  .itooltip-title {
+    font-size: .75rem; font-weight: 800; color: #10b981;
+    display: flex; align-items: center; gap: 6px;
+    margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+
+  .itooltip-row {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: .73rem; color: #cbd5e1;
+    margin-bottom: 6px;
+  }
+  .itooltip-row i { color: #10b981; margin-top: 1px; width: 13px; text-align: center; flex-shrink: 0; }
+  .itooltip-row span { line-height: 1.4; }
+
+  .itooltip-link {
+    color: #2dd4bf !important; text-decoration: none;
+    font-weight: 700;
+  }
+  .itooltip-link:hover { text-decoration: underline; }
 </style>
 {% endblock %}
 
@@ -232,6 +316,23 @@
 <!-- Toast element -->
 <div class="pipeline-toast" id="pipelineToast"></div>
 
+{% if messages %}
+<script>
+  // Fire Django messages as toast notifications on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    {% for msg in messages %}
+    (function() {
+      const toast = document.getElementById('pipelineToast');
+      toast.textContent = '{{ msg|escapejs }}';
+      toast.className = 'pipeline-toast {% if "Error" in msg.tags or "error" in msg.tags %}error{% else %}success{% endif %}';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    })();
+    {% endfor %}
+  });
+</script>
+{% endif %}
+
 <form id="status-csrf-form" style="display:none;">{% csrf_token %}</form>
 
 <script>
@@ -258,6 +359,14 @@ function showToast(msg) {
 
 // ── Action‑button handler for each card ──
 function getActionButtons(status, appId) {
+  const card = document.getElementById('card-' + appId);
+  const hasInterview = card ? card.dataset.hasInterview === 'true' : false;
+
+  // Schedule button only shown if no interview yet
+  const scheduleBtn = !hasInterview
+    ? `<a href="/hr/interview/create/${appId}/" class="btn-schedule"><i class="fa-regular fa-calendar-plus"></i> Schedule</a>`
+    : '';
+
   const map = {
     'Applied': `
       <button class="action-btn action-review"   onclick="updateStatus('${appId}','In Review')"><i class="fa-solid fa-magnifying-glass"></i> Review</button>
@@ -267,11 +376,13 @@ function getActionButtons(status, appId) {
       <button class="action-btn action-shortlist" onclick="updateStatus('${appId}','Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
       <button class="action-btn action-reject"    onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
     'Shortlisted': `
-      <button class="action-btn action-select"    onclick="updateStatus('${appId}','Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
-      <button class="action-btn action-reject"    onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
+      ${scheduleBtn}
+      <button class="action-btn action-select" onclick="updateStatus('${appId}','Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
+      <button class="action-btn action-reject"  onclick="updateStatus('${appId}','Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>`,
     'Rejected': `
-      <button class="action-btn action-review"    onclick="updateStatus('${appId}','In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>`,
-    'Selected': ''
+      <button class="action-btn action-review" onclick="updateStatus('${appId}','In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>`,
+    'Selected': `
+      <span class="action-btn" style="background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.3);cursor:default;"><i class="fa-solid fa-trophy"></i> Selected</span>`
   };
   return map[status] || '';
 }

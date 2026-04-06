@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Syne:wght@400..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
         rel="stylesheet" />
 
     <!-- Assets -->
@@ -40,6 +40,122 @@
             flex: 1;
             padding-top: 120px;
             padding-bottom: 60px;
+        }
+
+        /* ── DESIGN SYSTEM VARIABLES ── */
+        :root {
+            --bg-main: #07090f;
+            --bg-card: #0f1320;
+            --bg-card2: #141929;
+            --border: rgba(255,255,255,0.06);
+            --gold: #f5a623;
+            --gold-glow: rgba(245,166,35,0.15);
+            --teal: #0d9488;
+            --teal-light: #2dd4bf;
+            --teal-glow: rgba(13,148,136,0.15);
+            --purple: #7c3aed;
+            --white: #f1f5f9;
+            --muted: #64748b;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        /* ── REDESIGNED NAVBAR ── */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(7, 9, 15, 0.8) !important;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        /* Logo icon gradient morph */
+        .navbar .logo-icon {
+            background: linear-gradient(135deg, var(--gold), var(--teal)) !important;
+            border-radius: 8px; /* start sharp */
+            transition: border-radius 0.4s ease, transform 0.3s;
+        }
+        .navbar .nav-logo:hover .logo-icon {
+            border-radius: 50%; /* morph */
+            transform: scale(1.05);
+        }
+
+        /* Nav links */
+        .navbar .nav-item {
+            position: relative;
+            color: var(--white) !important;
+            transition: color 0.3s;
+        }
+        .navbar .nav-item:hover {
+            color: var(--teal-light) !important;
+        }
+        .navbar .nav-item.active {
+            color: var(--gold) !important;
+        }
+        
+        /* Animated underline bar for active link */
+        .navbar .nav-item::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+        .navbar .nav-item.active::after {
+            width: 100%;
+        }
+
+        /* Redesigned Logout Button */
+        .btn-logout-redesign {
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            background: transparent;
+            border-radius: 6px;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+        }
+        .btn-logout-redesign:hover {
+            background: var(--danger);
+            color: white;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
+
+        /* Notification Bell */
+        .nav-notification {
+            position: relative;
+            color: var(--muted);
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .nav-notification:hover {
+            color: var(--gold);
+        }
+        .nav-notification .badge {
+            position: absolute;
+            top: -5px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.6rem;
+            padding: 2px 5px;
+            border-radius: 50%;
+            border: 2px solid var(--bg-main);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -105,11 +221,20 @@
                 {% endif %}
             </ul>
 
-            <div class="nav-buttons">
+            <div class="nav-buttons d-flex align-items-center">
 
                 {% if user.is_authenticated or request.session.hr_id %}
-                <a href="{% url 'logout' %}"
-                    class="btn {% if request.session.hr_id %}btn-hr{% else %}btn-student{% endif %}">Logout</a>
+                {% if user.studentprofile %}
+                <a href="{% url 'notifications' %}" class="nav-notification">
+                    <i class="fa-solid fa-bell"></i>
+                    {% if notifications|length > 0 %}
+                    <span class="badge">{{ notifications|length }}</span>
+                    {% else %}
+                    <span class="badge" id="navBellBadge" style="display: none;">0</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+                <a href="{% url 'logout' %}" class="btn btn-logout-redesign">Logout</a>
                 {% else %}
                 <a href="{% url 'studlogin' %}" class="btn btn-student" id="btnStudentLogin">Student Login</a>
                 <a href="{% url 'hrlogin' %}" class="btn btn-hr" id="btnHrLogin">HR Login</a>

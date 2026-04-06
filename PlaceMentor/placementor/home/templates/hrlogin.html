@@ -3,50 +3,72 @@
 
 {% block title %}HR Login | PlaceMentor{% endblock %}
 
-{% block content %}
-<div class="container py-5 animate__animated animate__zoomIn">
-  <div class="row justify-content-center">
-    <div class="col-md-5">
-      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg text-center">
-        <div class="logo-icon mx-auto mb-4 bg-gold-soft text-gold"
-          style="width: 60px; height: 60px; font-size: 1.5rem;">PC</div>
-        <h1 class="fw-bold text-light mb-1">HR <span class="text-gold">Login</span></h1>
-        <p class="text-muted mb-5">Access your recruitment command center.</p>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+  .auth-page {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+    background:
+      radial-gradient(ellipse 70% 50% at 90% 10%, rgba(212,175,55,.08) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 45% at 10% 90%, rgba(245,166,35,.06) 0%, transparent 55%);
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 460px;
+  }
+</style>
+{% endblock %}
 
+{% block content %}
+<div class="auth-page animate__animated animate__fadeIn">
+  <div class="auth-card">
+    <div class="glass-panel position-relative overflow-hidden p-4 p-md-5">
+      <div class="position-absolute bottom-0 end-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 80% 100%, rgba(245,166,35,.18) 0%, transparent 55%); z-index: 0;"></div>
+      <div class="position-relative" style="z-index: 1;">
+
+        <!-- Header -->
+        <div class="text-center mb-5">
+          <div class="mx-auto mb-4 d-flex align-items-center justify-content-center fw-bold" style="width: 62px; height: 62px; font-size: 1.4rem; background: rgba(245,166,35,.15); border: 1px solid var(--gold); border-radius: 16px; color: var(--gold);">PC</div>
+          <h1 class="fw-bold mb-1">HR <span class="shimmer-text" style="color: var(--gold);">Login</span></h1>
+          <p class="text-white-50 mb-0">Access your recruitment command center.</p>
+        </div>
+
+        <!-- Django Messages -->
+        {% if messages %}
+          {% for message in messages %}
+          <div class="alert text-center mb-4 py-2" style="background: rgba(239,68,68,.12); border: 1px solid rgba(239,68,68,.3); color: #f87171; border-radius: 10px; font-size: .85rem;">
+            {{ message }}
+          </div>
+          {% endfor %}
+        {% endif %}
+
+        <!-- Form -->
         <form method="POST">
           {% csrf_token %}
-          <div class="mb-4 text-start">
-            <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
-            <input type="text" name="username"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3 font-outfit"
-              placeholder="Enter HR username" required>
+          <div class="mb-4">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Username</label>
+            <input type="text" name="username" class="form-control premium-input py-3" placeholder="Enter HR username" required>
           </div>
-          <div class="mb-5 text-start">
-            <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
-            <input type="password" name="password"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" placeholder="••••••••"
-              required>
+          <div class="mb-5">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Password</label>
+            <input type="password" name="password" class="form-control premium-input py-3" placeholder="••••••••" required>
           </div>
-          <button type="submit" class="btn btn-hr w-100 py-3 fw-bold fs-5">Login As HR</button>
+          <button type="submit" class="btn-premium w-100 py-3 fw-bold fs-5 border-0" style="border-radius: 12px; background: linear-gradient(135deg, #f5a623, #fde047); color: #000;">Login As HR</button>
 
-          <div class="mt-4 text-muted small">
-            Don't have an HR account? <a href="{% url 'hrregister' %}" class="text-gold text-decoration-none">Register
-              here</a>
+          <div class="text-center mt-4 text-white-50 small">
+            Don't have an HR account? <a href="{% url 'hrregister' %}" class="text-gold text-decoration-none">Register here</a>
           </div>
         </form>
       </div>
+    </div>
 
-      <div class="text-center mt-5">
-        <p class="text-muted small">Are you a student? <a href="{% url 'studlogin' %}"
-            class="text-teal text-decoration-none fw-bold">Student Login</a></p>
-      </div>
+    <div class="text-center mt-4">
+      <p class="text-white-50 small mb-0">Are you a student? <a href="{% url 'studlogin' %}" class="text-teal text-decoration-none fw-bold">Student Login →</a></p>
     </div>
   </div>
 </div>
-
-<style>
-  .bg-gold-soft {
-    background: rgba(245, 166, 35, 0.1);
-  }
-</style>
 {% endblock %}

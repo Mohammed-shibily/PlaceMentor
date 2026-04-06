@@ -1,5 +1,6 @@
-<div class="k-card" id="card-{{ app.id }}" data-appid="{{ app.id }}" data-status="{{ app.status }}" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
+<div class="k-card" id="card-{{ app.id }}" data-appid="{{ app.id }}" data-status="{{ app.status }}" data-has-interview="{{ app.has_interview|yesno:'true,false' }}" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)">
 
+  <!-- ── Header: Name + Score ── -->
   <div class="k-header">
     <div>
       <div class="k-name">{{ app.student.user.get_full_name|default:app.student.user.username }}</div>
@@ -10,6 +11,7 @@
     </div>
   </div>
 
+  <!-- ── Body: Job + Meta ── -->
   <div class="k-body">
     <div class="k-job"><i class="fa-solid fa-briefcase"></i> {{ app.job.title }}</div>
     <div class="k-meta">
@@ -36,22 +38,43 @@
       <button class="action-btn action-shortlist" onclick="updateStatus('{{ app.id }}', 'Shortlisted')"><i class="fa-solid fa-star"></i> Shortlist</button>
       <button class="action-btn action-reject"    onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
     {% elif app.status == 'Shortlisted' %}
-      <button class="action-btn action-select"    onclick="updateStatus('{{ app.id }}', 'Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
-      <button class="action-btn action-reject"    onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+      {% if not app.has_interview %}
+      <a href="{% url 'create_interview' app.id %}" class="btn-schedule"><i class="fa-regular fa-calendar-plus"></i> Schedule</a>
+      {% endif %}
+      <button class="action-btn action-select" onclick="updateStatus('{{ app.id }}', 'Selected')"><i class="fa-solid fa-check-double"></i> Select</button>
+      <button class="action-btn action-reject"  onclick="updateStatus('{{ app.id }}', 'Rejected')"><i class="fa-solid fa-xmark"></i> Reject</button>
+    {% elif app.status == 'Selected' %}
+      <span class="action-btn" style="background:rgba(16,185,129,.1);color:#10b981;border:1px solid rgba(16,185,129,.3);cursor:default;"><i class="fa-solid fa-trophy"></i> Selected</span>
     {% elif app.status == 'Rejected' %}
-      <button class="action-btn action-review"    onclick="updateStatus('{{ app.id }}', 'In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>
+      <button class="action-btn action-review" onclick="updateStatus('{{ app.id }}', 'In Review')"><i class="fa-solid fa-rotate-left"></i> Reconsider</button>
     {% endif %}
   </div>
 
+  <!-- ── Footer: Applied date + Interview badge + Email ── -->
   <div class="k-footer">
-    <div class="k-date"><i class="fa-solid fa-clock"></i> {{ app.applied_on|timesince }} ago</div>
     <div>
-      <a href="mailto:{{ app.student.user.email }}" class="view-btn"><i class="fa-solid fa-envelope"></i></a>
-      {% if app.status == "Shortlisted" and not app.interview %}
-      <a href="{% url 'create_interview' app.id %}" class="view-btn" style="background: rgba(20,184,166,.1); border-color: rgba(20,184,166,.3); color: #2dd4bf;" title="Schedule Interview">
-        <i class="fa-regular fa-calendar-plus"></i>
-      </a>
+      <div class="k-date"><i class="fa-solid fa-clock"></i> {{ app.applied_on|timesince }} ago</div>
+      {% if app.has_interview and app.interview %}
+      <div class="interview-badge mt-1 interview-tooltip-trigger">
+        <i class="fa-solid fa-calendar-check"></i> {{ app.interview.date|date:"M d · g:i A" }}
+        <div class="interview-tooltip">
+          <div class="itooltip-title"><i class="fa-solid fa-calendar-check"></i> Interview Scheduled</div>
+          <div class="itooltip-row"><i class="fa-regular fa-clock"></i> <span>{{ app.interview.date|date:"l, d M Y" }}</span></div>
+          <div class="itooltip-row"><i class="fa-solid fa-hourglass-start"></i> <span>{{ app.interview.date|date:"g:i A" }}</span></div>
+          {% if app.interview.location %}
+            {% with loc=app.interview.location %}
+            {% if "http" in loc or "zoom" in loc or "meet" in loc or "teams" in loc %}
+          <div class="itooltip-row"><i class="fa-solid fa-video"></i> <a href="{{ loc }}" target="_blank" class="itooltip-link">Join Online Meeting ↗</a></div>
+            {% else %}
+          <div class="itooltip-row"><i class="fa-solid fa-location-dot"></i> <span>{{ loc }}</span></div>
+            {% endif %}
+            {% endwith %}
+          {% endif %}
+        </div>
+      </div>
       {% endif %}
     </div>
+    <a href="mailto:{{ app.student.user.email }}" class="view-btn"><i class="fa-solid fa-envelope"></i></a>
   </div>
+
 </div>

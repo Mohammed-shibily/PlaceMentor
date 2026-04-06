@@ -3,25 +3,33 @@
 
 {% block title %}Schedule Interview | PlaceMentor{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container py-5 animate__animated animate__fadeInUp">
+<div class="premium-dashboard container py-5 animate__animated animate__fadeInUp">
   <div class="row justify-content-center">
-    <div class="col-lg-6">
-      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
+    <div class="col-lg-8">
+      <div class="glass-panel position-relative overflow-hidden p-4 p-md-5">
+        <div class="position-absolute top-0 end-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 90% 10%, rgba(124,58,237,0.15) 0%, transparent 40%); z-index: 0;"></div>
+        <div class="position-relative" style="z-index: 1;">
         <div class="text-center mb-5">
-          <h1 class="display-6 fw-bold mb-3">Schedule <span class="text-gold">Interview</span></h1>
-          <p class="text-muted">Finalize details for the selected candidate.</p>
+          <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); border-radius: 20px;">
+            <i class="fa-solid fa-calendar-check text-purple fs-2" style="color: #a78bfa;"></i>
+          </div>
+          <h1 class="fw-bold mb-3">Schedule <span class="shimmer-text" style="color: #a78bfa;">Interview</span></h1>
+          <p class="text-white-50">Finalize details for the selected candidate.</p>
         </div>
 
         <!-- Student & Job Snapshot -->
-        <div class="bg-dark p-4 rounded-4 mb-5 border border-secondary border-opacity-25">
+        <div class="p-4 rounded-4 mb-5" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05);">
           <div class="d-flex align-items-center mb-3">
             <div class="icon-box me-3 fs-3 text-gold"><i class="fa-solid fa-user-graduate"></i></div>
             <div>
               <small class="text-muted d-block text-uppercase tracking-widest"
                 style="font-size: 0.65rem;">Candidate</small>
-              <span class="fw-bold text-light">{{
-                application.student.user.get_full_name|default:application.student.user.username }}</span>
+              <span class="fw-bold text-light">{{ application.student.user.get_full_name|default:application.student.user.username }}</span>
             </div>
           </div>
           <div class="d-flex align-items-center">
@@ -37,22 +45,20 @@
 
         <form method="post" autocomplete="off">
           {% csrf_token %}
-          <div class="mb-4">
-            <label class="form-label text-muted small text-uppercase fw-bold">Date & Time</label>
-            <input type="datetime-local" name="date"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" required>
+          <div class="mb-4 text-start">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Date & Time</label>
+            <input type="datetime-local" name="date" class="form-control premium-input py-3" required>
           </div>
-          <div class="mb-5">
-            <label class="form-label text-muted small text-uppercase fw-bold">Location / Meeting Link</label>
-            <input type="text" name="location"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-              placeholder="e.g. Zoom Link, Google Meet, or Office Block 4" required>
+          <div class="mb-5 text-start">
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Location / Meeting Link</label>
+            <input type="text" name="location" class="form-control premium-input py-3" placeholder="e.g. Zoom Link, Google Meet, or Office Block 4" required>
           </div>
 
-          <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5">
+          <button type="submit" class="btn-premium py-3 fw-bold fs-5 w-100 border-0" style="background: linear-gradient(135deg, #7c3aed, #a78bfa); color: #fff; border-radius: 12px;">
             <i class="fa-solid fa-calendar-check me-2"></i>Confirm Schedule
           </button>
         </form>
+        </div>
       </div>
     </div>
   </div>

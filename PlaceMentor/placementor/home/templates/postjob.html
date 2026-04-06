@@ -3,60 +3,77 @@
 
 {% block title %}Post Job | PlaceMentor{% endblock %}
 
+{% block extra_css %}
+<!-- Load the premium redesign styles -->
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container animate__animated animate__fadeIn">
+<div class="premium-dashboard container animate__animated animate__fadeIn">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
-        <div class="text-center mb-5">
-          <h1 class="display-5 fw-bold mb-3">Post <span class="text-gold">New Job</span></h1>
-          <p class="text-muted">Create a new opportunity for aspiring candidates.</p>
+      
+      <div class="glass-panel position-relative my-5 overflow-hidden" style="padding: 50px;">
+        <!-- Decorative Glows -->
+        <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 10% 0%, var(--teal-glow) 0%, transparent 40%); z-index: 0;"></div>
+        <div class="position-absolute bottom-0 end-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 90% 100%, var(--gold-glow) 0%, transparent 40%); z-index: 0;"></div>
+        
+        <div class="position-relative" style="z-index: 1;">
+          <div class="text-center mb-5">
+            <div class="d-inline-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: rgba(13, 148, 136, 0.15); border: 1px solid rgba(13, 148, 136, 0.3); border-radius: 20px;">
+              <i class="fa-solid fa-briefcase text-teal-light fs-2"></i>
+            </div>
+            <h1 class="fw-bold mb-2">Post <span class="shimmer-text" style="color: var(--gold);">New Job</span></h1>
+            <p class="text-white-50" style="font-size: 1.05rem;">Create a brilliant new opportunity for aspiring candidates.</p>
+          </div>
+
+          <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-4">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Job Title</label>
+              <input type="text" name="title" class="form-control premium-input" placeholder="e.g. Senior Software Engineer" required>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Description</label>
+              <textarea name="description" class="form-control premium-input" rows="5" placeholder="Provide a detailed job description and expectations..." required style="resize: vertical; min-height: 120px;"></textarea>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-4">
+                <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Minimum CGPA</label>
+                <div class="position-relative">
+                  <div class="position-absolute top-50 start-0 translate-middle-y ms-3 text-white-50">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                  </div>
+                  <input type="number" step="0.01" name="eligibility_cgpa" class="form-control premium-input ps-5" placeholder="e.g. 6.5" required>
+                </div>
+              </div>
+              
+              <div class="col-md-6 mb-4">
+                <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Last Date to Apply</label>
+                <input type="date" name="last_date" class="form-control premium-input" required>
+              </div>
+            </div>
+
+            <div class="mb-5">
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">
+                <i class="fa-solid fa-bolt-lightning text-gold me-1"></i> Skills Required <span class="text-muted text-lowercase" style="font-size: 0.75rem;">(comma separated)</span>
+              </label>
+              <input type="text" name="skills_required" class="form-control premium-input" placeholder="e.g. Python, Django, React, SQL" required>
+            </div>
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn-premium btn-teal-gradient w-100 py-3 fs-5 d-flex align-items-center justify-content-center" style="border-radius: 12px;">
+                <i class="fa-solid fa-paper-plane me-2"></i> Publish Job Posting
+              </button>
+            </div>
+            
+          </form>
         </div>
-
-        <form method="POST">
-          {% csrf_token %}
-          <div class="mb-4">
-            <label class="form-label text-muted small text-uppercase fw-bold">Job Title</label>
-            <input type="text" name="title"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-              placeholder="e.g. Senior Software Engineer" required>
-          </div>
-
-          <div class="mb-4">
-            <label class="form-label text-muted small text-uppercase fw-bold">Description</label>
-            <textarea name="description" class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-              rows="4" placeholder="Detailed job description and expectations..." required
-              style="height: auto;"></textarea>
-          </div>
-
-          <div class="row">
-            <div class="col-md-6 mb-4">
-              <label class="form-label text-muted small text-uppercase fw-bold">Minimum CGPA</label>
-              <input type="number" step="0.01" name="eligibility_cgpa"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" placeholder="e.g. 6.5"
-                required>
-            </div>
-            <div class="col-md-6 mb-4">
-              <label class="form-label text-muted small text-uppercase fw-bold">Last Date to Apply</label>
-              <input type="date" name="last_date"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-3" required>
-            </div>
-          </div>
-
-          <div class="mb-5">
-            <label class="form-label text-muted small text-uppercase fw-bold">
-              <i class="fa-solid fa-bolt-lightning text-gold me-1"></i> Skills Required (Comma separated)
-            </label>
-            <input type="text" name="skills_required"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-3"
-              placeholder="e.g. Python, Django, SQL" required>
-          </div>
-
-          <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5">
-            <i class="fa-solid fa-paper-plane me-2"></i>Publish Job Posting
-          </button>
-        </form>
       </div>
+      
     </div>
   </div>
 </div>

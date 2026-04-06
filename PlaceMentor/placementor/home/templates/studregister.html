@@ -3,93 +3,82 @@
 
 {% block title %}Student Registration | PlaceMentor{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
 {% block content %}
-<div class="container py-5 animate__animated animate__zoomIn">
+<div class="premium-dashboard container py-5 animate__animated animate__zoomIn">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <div class="card bg-dark2 border border-secondary border-opacity-10 p-4 p-md-5 rounded-4 shadow-lg">
+      <div class="glass-panel position-relative overflow-hidden p-4 p-md-5">
+        <div class="position-absolute top-0 end-0 w-100 h-100 pointer-events-none" style="background: radial-gradient(circle at 100% 0%, var(--teal-glow) 0%, transparent 40%); z-index: 0;"></div>
+        <div class="position-relative" style="z-index: 1;">
+        
         <div class="text-center mb-5">
-          <div class="logo-icon mx-auto mb-4" style="width: 50px; height: 50px; font-size: 1.2rem;">PC</div>
-          <h1 class="fw-bold text-light mb-1">Student <span class="text-gold">Registration</span></h1>
-          <p class="text-muted">Join the elite recruitment network of Excellence College.</p>
+          <div class="logo-icon mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 1.2rem; background: rgba(13, 148, 136, 0.15); border: 1px solid var(--teal); border-radius: 14px; color: var(--teal-light);">PC</div>
+          <h1 class="fw-bold mb-1">Student <span class="shimmer-text">Registration</span></h1>
+          <p class="text-white-50">Join the elite recruitment network of Excellence College.</p>
         </div>
 
         <form method="POST" action="{% url 'studregister' %}">
           {% csrf_token %}
           <div class="row g-4 mb-4">
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Username</label>
-              <input type="text" name="username"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ username|default:'' }}" placeholder="Choose a username" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Username</label>
+              <input type="text" name="username" class="form-control premium-input py-3" value="{{ username|default:'' }}" placeholder="Choose a username" required>
             </div>
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Email Address</label>
-              <input type="email" name="email"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ email|default:'' }}" placeholder="Enter your email" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Email Address</label>
+              <input type="email" name="email" class="form-control premium-input py-3" value="{{ email|default:'' }}" placeholder="Enter your email" required>
             </div>
           </div>
 
           <div class="row g-4 mb-4">
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">College Name</label>
-              <input type="text" name="college_name"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ college_name|default:'' }}" placeholder="e.g. Excellence College of Engineering" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">College Name</label>
+              <input type="text" name="college_name" class="form-control premium-input py-3" value="{{ college_name|default:'' }}" placeholder="e.g. Excellence College of Engineering" required>
             </div>
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Branch</label>
-              <input type="text" name="branch"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ branch|default:'' }}" placeholder="e.g. Computer Science" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Branch</label>
+              <input type="text" name="branch" class="form-control premium-input py-3" value="{{ branch|default:'' }}" placeholder="e.g. Computer Science" required>
             </div>
           </div>
 
           <div class="row g-4 mb-4">
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Current CGPA</label>
-              <input type="number" step="0.01" min="0" max="10" name="cgpa"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ cgpa|default:'' }}" placeholder="0.0 - 10.0" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Current CGPA</label>
+              <input type="number" step="0.01" min="0" max="10" name="cgpa" class="form-control premium-input py-3" value="{{ cgpa|default:'' }}" placeholder="0.0 - 10.0" required>
             </div>
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Phone Number</label>
-              <input type="text" name="phone"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                value="{{ phone|default:'' }}" placeholder="10-digit number" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Phone Number</label>
+              <input type="text" name="phone" class="form-control premium-input py-3" value="{{ phone|default:'' }}" placeholder="10-digit number" required>
             </div>
           </div>
 
           <div class="mb-4 text-start">
-            <label class="form-label text-muted small text-uppercase fw-bold">Key Skills (Comma separated)</label>
-            <input type="text" name="skills"
-              class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-              value="{{ skills|default:'' }}" placeholder="e.g. Python, Django, React, SQL" required>
+            <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Key Skills (Comma separated)</label>
+            <input type="text" name="skills" class="form-control premium-input py-3" value="{{ skills|default:'' }}" placeholder="e.g. Python, Django, React, SQL" required>
           </div>
 
           <div class="row g-4 mb-5">
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Password</label>
-              <input type="password" name="password"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                placeholder="Min. 8 characters" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Password</label>
+              <input type="password" name="password" class="form-control premium-input py-3" placeholder="Min. 8 characters" required>
             </div>
             <div class="col-md-6 text-start">
-              <label class="form-label text-muted small text-uppercase fw-bold">Confirm Password</label>
-              <input type="password" name="password2"
-                class="form-control bg-dark border-secondary border-opacity-25 text-light py-2"
-                placeholder="Repeat password" required>
+              <label class="form-label text-white-50 small text-uppercase tracking-widest fw-semibold ms-1">Confirm Password</label>
+              <input type="password" name="password2" class="form-control premium-input py-3" placeholder="Repeat password" required>
             </div>
           </div>
 
-          <button type="submit" class="btn btn-student w-100 py-3 fw-bold fs-5 mb-4">Create My Profile</button>
+          <button type="submit" class="btn-premium btn-teal-gradient w-100 py-3 fw-bold fs-5 mb-4 border-0" style="border-radius: 12px;">Create My Profile</button>
 
-          <div class="text-center text-muted small">
-            Already have an account? <a href="{% url 'studlogin' %}" class="text-gold text-decoration-none">Login
-              here</a>
+          <div class="text-center text-white-50 small">
+            Already have an account? <a href="{% url 'studlogin' %}" class="text-gold text-decoration-none">Login here</a>
           </div>
         </form>
+        </div>
       </div>
     </div>
   </div>

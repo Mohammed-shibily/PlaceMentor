@@ -692,11 +692,25 @@ def create_interview(request, app_id):
     # Prevent duplicate interview
     if hasattr(application, "interview"):
         messages.error(request, "Interview already scheduled for this application.")
-        return redirect("hrdashboard")
+        return redirect("hr_applications")
 
     if request.method == "POST":
         date = request.POST.get("date")
         location = request.POST.get("location")
+
+        # Determine interview mode label
+        is_online = any(kw in location.lower() for kw in ["http", "zoom", "meet", "teams", "webex"])
+        mode_label = "Online (Virtual)" if is_online else "In-Person"
+        location_label = "Meeting Link" if is_online else "Venue"
+
+        # Format date nicely for email
+        from django.utils.dateparse import parse_datetime
+        from django.utils.formats import date_format
+        try:
+            dt = parse_datetime(date)
+            formatted_date = dt.strftime("%A, %d %B %Y at %I:%M %p") if dt else date
+        except Exception:
+            formatted_date = date
 
         # Create interview
         interview = Interview.objects.create(
@@ -705,24 +719,38 @@ def create_interview(request, app_id):
             location=location,
         )
 
-        # Create notification
-        note = Notification.objects.create(
-            student=application.student,
-            message=f"Interview scheduled for {application.job.title} at {application.job.company} on {date} at {location}."
+        # Rich notification message
+        candidate_name = application.student.name or application.student.user.username
+        note_msg = (
+            f"📅 Interview Scheduled!\n\n"
+            f"Hi {candidate_name},\n\n"
+            f"Your interview for the position of '{application.job.title}' at {application.job.company} "
+            f"has been officially scheduled.\n\n"
+            f"📆 Date & Time: {formatted_date}\n"
+            f"📍 Mode: {mode_label}\n"
+            f"🔗 {location_label}: {location}\n\n"
+            f"Please be on time and well-prepared. Best of luck!\n\n"
+            f"— PlaceMentor Team"
         )
 
-        # Send email
+        # Create in-app notification
+        Notification.objects.create(
+            student=application.student,
+            message=f"📅 Interview scheduled for '{application.job.title}' at {application.job.company} on {formatted_date}."
+        )
+
+        # Send rich email notification
         if application.student.user.email:
             send_mail(
-                subject="📅 Interview Scheduled",
-                message=note.message,
+                subject=f"📅 Interview Scheduled — {application.job.title} at {application.job.company}",
+                message=note_msg,
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[application.student.user.email],
-                fail_silently=False,
+                fail_silently=True,
             )
 
-        messages.success(request, "Interview scheduled successfully!")
-        return redirect("hrdashboard")
+        messages.success(request, f"✅ Interview scheduled for {candidate_name} on {formatted_date}!")
+        return redirect("hr_applications")
 
     return render(request, "create_interview.html", {"application": application})
 

@@ -4,232 +4,120 @@
 {% block title %}HR Dashboard | PlaceMentor{% endblock %}
 
 {% block extra_css %}
-<style>
-  .dashboard-hero {
-    background: linear-gradient(135deg, rgba(10, 14, 26, 1) 0%, rgba(17, 24, 39, 1) 100%);
-    border-radius: 24px;
-    padding: 40px;
-    margin-bottom: 40px;
-    border: 1px solid rgba(245, 166, 35, 0.1);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .dashboard-hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, rgba(245, 166, 35, 0.05) 0%, transparent 70%);
-    z-index: 0;
-  }
-
-  .glass-card {
-    background: rgba(17, 24, 39, 0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    transition: all 0.3s ease;
-  }
-
-  .glass-card:hover {
-    border-color: rgba(245, 166, 35, 0.3);
-    transform: translateY(-5px);
-  }
-
-  .stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    font-size: 1.25rem;
-  }
-
-  .bg-gold-soft {
-    background: rgba(245, 166, 35, 0.1);
-    color: var(--gold);
-  }
-
-  .bg-teal-soft {
-    background: rgba(13, 148, 136, 0.1);
-    color: var(--teal-light);
-  }
-
-  .bg-purple-soft {
-    background: rgba(139, 92, 246, 0.1);
-    color: #a78bfa;
-  }
-
-  .activity-row {
-    border-radius: 12px;
-    transition: background 0.2s;
-    margin-bottom: 8px;
-  }
-
-  .activity-row:hover {
-    background: rgba(255, 255, 255, 0.02);
-  }
-
-  .status-badge {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .status-applied {
-    background: rgba(148, 163, 184, 0.1);
-    color: #ffffff;
-  }
-
-  .status-selected {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-  }
-
-  .status-rejected {
-    background: rgba(239, 68, 68, 0.1);
-    color: #ef4444;
-  }
-
-  .stat-card-glow {
-    position: relative;
-    overflow: hidden;
-  }
-
-  .stat-card-glow::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle, rgba(245, 166, 35, 0.03) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .search-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 8px 16px;
-    transition: all 0.3s ease;
-  }
-
-  .search-container:focus-within {
-    border-color: var(--gold);
-    background: rgba(255, 255, 255, 0.05);
-    box-shadow: 0 0 15px rgba(245, 166, 35, 0.1);
-  }
-
-  .search-input {
-    background: transparent;
-    border: none;
-    color: white;
-    outline: none;
-    width: 100%;
-  }
-
-  .search-input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-  }
-</style>
+<!-- Load the premium redesign styles -->
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="container py-4 animate__animated animate__fadeIn">
+<div class="premium-dashboard container animate__animated animate__fadeIn">
 
-  <!-- Premium Header Section -->
-  <div class="dashboard-hero d-flex flex-column flex-md-row align-items-center justify-content-between">
-    <div class="d-flex align-items-center gap-4">
-      <div class="bg-gold-soft p-3 rounded-4">
-        <i class="fa-solid fa-building-user fs-1"></i>
+  <!-- ===============================
+       HR HERO CARD 
+  ================================ -->
+  <div class="hero-card">
+    <div class="hero-card-inner">
+      <!-- Left side: Avatar & Info -->
+      <div class="d-flex align-items-center gap-4 flex-wrap">
+        <div class="avatar-wrap">
+            <div class="avatar-ring-outer"></div>
+            <div class="avatar-ring-inner"></div>
+            <div class="avatar-letter">
+                <i class="fa-solid fa-building-user text-gold" style="font-size: 1.8rem;"></i>
+            </div>
+        </div>
+        <div>
+          <h1 class="h2 fw-bold mb-2">
+              HR <span class="shimmer-text">Command Center</span>
+          </h1>
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="badge" style="background: rgba(245,166,35,0.2); color: var(--gold); padding: 6px 12px; border-radius: 999px;">
+                {{ hr.company }}
+            </span>
+            <span class="text-white-50" style="font-size: 0.9rem;">
+                <span class="text-gold mx-1">•</span> HR Manager: {{ hr.fullname }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div class="text-center text-md-start">
-        <h1 class="h2 fw-bold text-white mb-1">HR Command Center</h1>
-        <p class="text-white-50 mb-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
-          <span class="badge bg-gold-soft">{{ hr.company }}</span>
-          <span class="text-gold opacity-50">•</span>
-          <span>HR Manager: {{ hr.fullname }}</span>
-        </p>
+
+      <!-- Right side: Actions -->
+      <div class="d-flex gap-3 flex-wrap mt-3 mt-md-0">
+        <a href="{% url 'post_job' %}" class="btn-premium btn-teal-gradient shadow-lg text-decoration-none">
+          <i class="fa-solid fa-plus"></i> Post New Job
+        </a>
       </div>
-    </div>
-    <div class="mt-4 mt-md-0">
-      <a href="{% url 'post_job' %}" class="btn btn-student px-4 py-2 rounded-pill shadow-lg text-decoration-none">
-        <i class="fa-solid fa-plus me-2"></i>Post New Job
-      </a>
     </div>
   </div>
 
-  <!-- Quick Stats -->
+  <!-- ===============================
+       STATS ROW 
+  ================================ -->
   <div class="row g-4 mb-5">
     <div class="col-6 col-md-4">
-      <div class="glass-card stat-card-glow p-4 text-center">
-        <div class="stat-icon bg-gold-soft mx-auto"><i class="fa-solid fa-briefcase"></i></div>
-        <h3 class="h2 fw-bold text-white mb-1">{{ active_jobs }}</h3>
-        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Active Jobs</p>
-        <div class="mt-2 small text-success">
+      <div class="stat-card gold">
+        <div class="stat-accent bg-warning"></div>
+        <div class="stat-icon-box"><i class="fa-solid fa-briefcase"></i></div>
+        <h3 class="stat-value" data-value="{{ active_jobs }}">0</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0 fw-semibold">Active Jobs</p>
+        <div class="mt-2 text-success" style="font-size: 0.75rem;">
           <i class="fa-solid fa-arrow-trend-up me-1"></i>Live Now
         </div>
       </div>
     </div>
     <div class="col-6 col-md-4">
-      <div class="glass-card stat-card-glow p-4 text-center">
-        <div class="stat-icon bg-teal-soft mx-auto"><i class="fa-solid fa-users"></i></div>
-        <h3 class="h2 fw-bold text-white mb-1">{{ applications_count }}</h3>
-        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Total Applicants</p>
-        <div class="mt-2 small text-white-50">
+      <div class="stat-card teal">
+        <div class="stat-accent bg-info"></div>
+        <div class="stat-icon-box"><i class="fa-solid fa-users"></i></div>
+        <h3 class="stat-value" data-value="{{ applications_count }}">0</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0 fw-semibold">Total Applicants</p>
+        <div class="mt-2 text-white-50" style="font-size: 0.75rem;">
           <i class="fa-solid fa-circle-check text-teal-light me-1"></i>Last 30 days
         </div>
       </div>
     </div>
     <div class="col-6 col-md-4">
-      <div class="glass-card stat-card-glow p-4 text-center">
-        <div class="stat-icon bg-purple-soft mx-auto"><i class="fa-solid fa-video"></i></div>
-        <h3 class="h2 fw-bold text-white mb-1">{{ interviews }}</h3>
-        <p class="text-white-50 small text-uppercase tracking-widest mb-0">Interviews</p>
-        <div class="mt-2 small text-gold">
+      <div class="stat-card purple">
+        <div class="stat-accent" style="background: var(--purple);"></div>
+        <div class="stat-icon-box"><i class="fa-solid fa-video"></i></div>
+        <h3 class="stat-value" data-value="{{ interviews }}">0</h3>
+        <p class="text-white-50 small text-uppercase tracking-widest mb-0 fw-semibold">Interviews</p>
+        <div class="mt-2 text-gold" style="font-size: 0.75rem;">
           <i class="fa-solid fa-clock me-1"></i>Upcoming
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Recent Candidate Activity -->
-  <div class="glass-card p-4">
+  <!-- ===============================
+       RECENT CANDIDATE ACTIVITY 
+  ================================ -->
+  <div class="glass-panel reveal-on-scroll p-4 mb-5">
     <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-4 gap-3">
-      <h5 class="fw-bold text-white mb-0">Recent Candidate Activity</h5>
+      <h4 class="fw-bold mb-0">Recent Candidate Activity</h4>
       
       <div class="d-flex align-items-center gap-3">
-        <div class="search-container d-flex align-items-center">
+        <div class="search-container d-flex align-items-center" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 6px 16px;">
           <i class="fa-solid fa-magnifying-glass text-white-50 me-2 small"></i>
-          <input type="text" id="candidateSearch" class="search-input small" placeholder="Search by name or position...">
+          <input type="text" id="candidateSearch" class="search-input small bg-transparent border-0 text-white outline-none" placeholder="Search..." style="outline:none;">
         </div>
-        <a href="{% url 'hr_applications' %}" class="btn btn-link text-gold text-decoration-none small p-0">View All</a>
+        <a href="{% url 'hr_applications' %}" class="btn-premium btn-outline-ghost py-1 px-3 text-decoration-none" style="font-size: 0.85rem;">View All</a>
       </div>
     </div>
 
     <div class="table-responsive">
-      <table class="table table-dark table-hover align-middle mb-0">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
         <thead>
           <tr class="text-white-50 small text-uppercase tracking-wider border-0">
-            <th class="ps-0 border-0">Candidate</th>
-            <th class="border-0">Position</th>
-            <th class="border-0">Status</th>
-            <th class="text-end pe-0 border-0">Action</th>
+            <th class="ps-0 border-0 bg-transparent">Candidate</th>
+            <th class="border-0 bg-transparent">Position</th>
+            <th class="border-0 bg-transparent">Status</th>
+            <th class="text-end pe-0 border-0 bg-transparent">Action</th>
           </tr>
         </thead>
         <tbody class="border-0">
           {% for app in applications|slice:":8" %}
-          <tr class="activity-row border-0">
-            <td class="ps-0 py-3 border-0">
+          <tr class="alert-item" style="display: table-row; background: transparent; padding: 0;">
+            <td class="ps-3 py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <div class="d-flex align-items-center gap-3">
                 <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center"
                   style="width: 35px; height: 35px; border: 1px solid rgba(255,255,255,0.05)">
@@ -238,25 +126,25 @@
                 <span class="fw-bold text-white">{{ app.student.user.username }}</span>
               </div>
             </td>
-            <td class="py-3 border-0">
+            <td class="py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <span class="text-gold small">{{ app.job.title }}</span>
             </td>
-            <td class="py-3 border-0">
-              <span class="status-badge 
-                {% if app.status == 'Selected' %}status-selected
-                {% elif app.status == 'Rejected' %}status-rejected
-                {% else %}status-applied{% endif %}">
+            <td class="py-3 border-bottom border-light border-opacity-10 bg-transparent">
+              <span style="border-radius: 8px; font-size: 0.75rem; padding: 6px 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+                {% if app.status == 'Selected' %}background: rgba(16, 185, 129, 0.1); color: #10b981;
+                {% elif app.status == 'Rejected' %}background: rgba(239, 68, 68, 0.1); color: #ef4444;
+                {% else %}background: rgba(148, 163, 184, 0.1); color: #ffffff;{% endif %}">
                 {{ app.status }}
               </span>
             </td>
-            <td class="text-end pe-0 py-3 border-0">
+            <td class="text-end pe-3 py-3 border-bottom border-light border-opacity-10 bg-transparent">
               {% if app.interview %}
               <span class="text-gold small d-flex align-items-center justify-content-end gap-2">
                 <i class="fa-solid fa-check-double"></i> Interviewed
               </span>
-              {% elif app.status == "Selected" %}
+              {% elif app.status == 'Selected' or app.status == 'Shortlisted' %}
               <a href="{% url 'create_interview' app.id %}"
-                class="btn btn-outline-teal btn-sm px-3 rounded-pill">Schedule</a>
+                class="btn-premium btn-teal-gradient py-1 px-3" style="font-size: 0.8rem;">Schedule</a>
               {% else %}
               <span class="text-white-50 small italic">Processing</span>
               {% endif %}
@@ -264,7 +152,7 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="4" class="text-center py-5 text-white-50">
+            <td colspan="4" class="text-center py-5 text-white-50 bg-transparent border-0">
               <div class="mb-3"><i class="fa-solid fa-folder-open fs-1 opacity-20"></i></div>
               <span>No candidates found for your postings.</span>
             </td>
@@ -275,51 +163,53 @@
     </div>
   </div>
 
-  <!-- Manage My Jobs -->
-  <div class="glass-card p-4 mt-5 animate__animated animate__fadeInUp">
+  <!-- ===============================
+       MANAGE MY JOBS 
+  ================================ -->
+  <div class="glass-panel reveal-on-scroll p-4 mb-5">
     <div class="d-flex align-items-center justify-content-between mb-4">
-      <h5 class="fw-bold text-white mb-0">Manage My Postings</h5>
-      <span class="badge bg-gold-soft">{{ jobs_list|length }} Total</span>
+      <h4 class="fw-bold mb-0">Manage My Postings</h4>
+      <span class="badge" style="background: rgba(245,166,35,0.1); color: var(--gold);">{{ jobs_list|length }} Total</span>
     </div>
 
     <div class="table-responsive">
-      <table class="table table-dark table-hover align-middle mb-0">
+      <table class="table table-dark table-hover align-middle mb-0 bg-transparent">
         <thead>
           <tr class="text-white-50 small text-uppercase tracking-wider border-0">
-            <th class="ps-0 border-0">Job Title</th>
-            <th class="border-0">Posted On</th>
-            <th class="border-0">Deadline</th>
-            <th class="text-end pe-0 border-0">Actions</th>
+            <th class="ps-0 border-0 bg-transparent">Job Title</th>
+            <th class="border-0 bg-transparent">Posted On</th>
+            <th class="border-0 bg-transparent">Deadline</th>
+            <th class="text-end pe-0 border-0 bg-transparent">Actions</th>
           </tr>
         </thead>
         <tbody class="border-0">
           {% for job in jobs_list %}
-          <tr class="job-activity-row border-0">
-            <td class="ps-0 py-3 border-0">
+          <tr class="alert-item" style="display: table-row; background: transparent; padding: 0;">
+            <td class="ps-3 py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <span class="fw-bold text-white">{{ job.title }}</span>
             </td>
-            <td class="py-3 border-0">
+            <td class="py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <span class="text-white-50 small">{{ job.created_at|date:"M d, Y" }}</span>
             </td>
-            <td class="py-3 border-0">
+            <td class="py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <span class="{% if job.last_date < now %}text-danger{% else %}text-teal-light{% endif %} small">
                 {{ job.last_date|date:"M d, Y" }}
               </span>
             </td>
-            <td class="text-end pe-0 py-3 border-0">
+            <td class="text-end pe-3 py-3 border-bottom border-light border-opacity-10 bg-transparent">
               <div class="d-flex justify-content-end gap-2">
-                <a href="{% url 'edit_job' job.id %}" class="btn btn-outline-teal btn-sm rounded-pill">
-                  <i class="fa-solid fa-pen-to-square"></i>
+                <a href="{% url 'edit_job' job.id %}" class="btn-premium btn-teal-gradient py-1 px-3 d-flex align-items-center justify-content-center" style="min-width: 40px;">
+                  <i class="fa-solid fa-pen-to-square m-0"></i>
                 </a>
-                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="confirmDelete('{{ job.id }}', '{{ job.title }}')">
-                  <i class="fa-solid fa-trash"></i>
+                <button class="btn-premium py-1 px-3 d-flex align-items-center justify-content-center" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); min-width: 40px;" onclick="confirmDelete('{{ job.id }}', '{{ job.title }}')">
+                  <i class="fa-solid fa-trash m-0"></i>
                 </button>
               </div>
             </td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="4" class="text-center py-5 text-white-50">
+            <td colspan="4" class="text-center py-5 text-white-50 bg-transparent border-0">
               <div class="mb-3"><i class="fa-solid fa-folder-plus fs-1 opacity-20"></i></div>
               <span>No jobs posted yet.</span>
             </td>
@@ -334,6 +224,8 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Load the new redesign scripts -->
+<script src="{% static 'js/dashboard.js' %}"></script>
 <script>
   function confirmDelete(jobId, jobTitle) {
     Swal.fire({
@@ -341,11 +233,14 @@
       text: `Do you want to delete the job posting: "${jobTitle}"?`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
+      confirmButtonColor: '#ef4444',
+      cancelButtonColor: '#64748b',
       confirmButtonText: 'Yes, delete it!',
-      background: '#111827',
-      color: '#f0f4ff'
+      background: '#0f1320',
+      color: '#f1f5f9',
+      customClass: {
+          popup: 'border border-secondary border-opacity-10 rounded-4'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         window.location.href = `/hr/job/delete/${jobId}/`;
@@ -353,4 +248,4 @@
     });
   }
 </script>
-{% endblock %}
+{% endblock %}
