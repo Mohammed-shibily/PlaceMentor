@@ -123,21 +123,21 @@
      ============================================ -->
   <section class="stats-section" id="stats">
     <div class="container">
-      <div class="stats-grid">
+      <div class="stats-grid reveal-stagger">
 
-        <div class="stat-card animate-reveal" data-target="500" data-suffix="+">
+        <div class="stat-card reveal" data-target="500" data-suffix="+">
           <div class="stat-icon animate-float">👨‍🎓</div>
           <div class="stat-number"><span class="count">0</span><span class="suffix">+</span></div>
           <div class="stat-label">Students Placed</div>
         </div>
 
-        <div class="stat-card animate-reveal" data-target="50" data-suffix="+">
+        <div class="stat-card reveal" data-target="50" data-suffix="+">
           <div class="stat-icon animate-float">🏢</div>
           <div class="stat-number"><span class="count">0</span><span class="suffix">+</span></div>
           <div class="stat-label">Partner Companies</div>
         </div>
 
-        <div class="stat-card animate-reveal" data-target="85" data-suffix="%">
+        <div class="stat-card reveal" data-target="85" data-suffix="%">
           <div class="stat-icon animate-float">📈</div>
           <div class="stat-number"><span class="count">0</span><span class="suffix">%</span></div>
           <div class="stat-label">Placement Success Rate</div>
@@ -155,7 +155,7 @@
       <div class="about-grid">
 
         <!-- Left: Text -->
-        <div class="about-text">
+        <div class="about-text reveal-left">
           <span class="section-label">About Us</span>
           <h2 class="section-title">Bridging Academia<br />& Industry</h2>
           <p class="about-desc">
@@ -188,7 +188,7 @@
         </div>
 
         <!-- Right: Visual Card -->
-        <div class="about-visual">
+        <div class="about-visual reveal-right">
           <div class="about-card animate-float">
             <div class="about-card-icon">🚀</div>
             <h3>Our Impact at a Glance</h3>
@@ -231,30 +231,30 @@
         <h2 class="section-title">What We Offer</h2>
       </div>
 
-      <div class="features-grid">
+      <div class="features-grid reveal-stagger">
 
-        <div class="feature-card animate-reveal">
+        <div class="feature-card reveal">
           <div class="feature-icon animate-float">🎯</div>
           <h3>Smart Job Matching</h3>
           <p>Our intelligent system matches students with relevant opportunities based on their skills, interests, and
             academic performance.</p>
         </div>
 
-        <div class="feature-card animate-reveal">
+        <div class="feature-card reveal">
           <div class="feature-icon animate-float">📋</div>
           <h3>Application Tracking</h3>
           <p>Real-time tracking of every application — from submission to shortlisting, interview, and final offer — all
             in one dashboard.</p>
         </div>
 
-        <div class="feature-card animate-reveal">
+        <div class="feature-card reveal">
           <div class="feature-icon animate-float">🤝</div>
           <h3>HR Partnership Portal</h3>
           <p>Companies get a streamlined portal to post openings, review candidates, schedule interviews, and manage
             hiring workflows.</p>
         </div>
 
-        <div class="feature-card animate-reveal">
+        <div class="feature-card reveal">
           <div class="feature-icon animate-float">🎓</div>
           <h3>Career Development</h3>
           <p>From resume building to mock interviews and soft skills workshops — we prepare students to excel in every
@@ -477,40 +477,56 @@
     (function () {
       'use strict';
 
-      /* ---- Navbar scroll effect ---- */
+      /* ---- Navbar: scroll effect + padding tighten ---- */
       const navbar = document.getElementById('navbar');
       window.addEventListener('scroll', () => {
         navbar.classList.toggle('scrolled', window.scrollY > 60);
-      });
+      }, { passive: true });
 
       /* ---- Mobile nav toggle ---- */
       const navToggle = document.getElementById('navToggle');
       const navLinks = document.getElementById('navLinks');
-      navToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('open');
-      });
+      if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+          navLinks.classList.toggle('open');
+        });
+      }
 
-      /* ---- IntersectionObserver: section title underline ---- */
+      /* ---- Section title underline on scroll ---- */
       const sectionTitles = document.querySelectorAll('.section-title');
       const titleObserver = new IntersectionObserver((entries) => {
         entries.forEach(e => {
-          if (e.isIntersecting) e.target.classList.add('animate-line');
+          if (e.isIntersecting) {
+            e.target.classList.add('animate-line');
+            titleObserver.unobserve(e.target);
+          }
         });
       }, { threshold: 0.5 });
       sectionTitles.forEach(t => titleObserver.observe(t));
 
-      /* ---- IntersectionObserver: stat cards CountUp ---- */
+      /* ---- Unified Scroll Reveal Observer ---- */
+      const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .features-header, .testimonials-header');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            revealObserver.unobserve(entry.target); // fire once only
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      revealEls.forEach(el => revealObserver.observe(el));
+
+      /* ---- Stat CountUp (triggered when stat card reveals) ---- */
       const statCards = document.querySelectorAll('.stat-card');
       let statsCounted = false;
 
-      function animateCount(el, target, suffix) {
+      function animateCount(el, target) {
+        const counter = el.querySelector('.count');
+        if (!counter) return;
         let current = 0;
-        const duration = 2000;
         const steps = 60;
         const increment = target / steps;
-        const stepTime = duration / steps;
-        const counter = el.querySelector('.count');
-
+        const stepTime = 2000 / steps;
         const timer = setInterval(() => {
           current += increment;
           if (current >= target) {
@@ -523,32 +539,30 @@
 
       const statsObserver = new IntersectionObserver((entries) => {
         entries.forEach(e => {
-          if (e.isIntersecting) {
-            e.target.classList.add('visible');
-            if (!statsCounted) {
-              statsCounted = true;
-              statCards.forEach(card => {
-                const target = parseInt(card.dataset.target);
-                animateCount(card, target);
-              });
-            }
+          if (e.isIntersecting && !statsCounted) {
+            statsCounted = true;
+            statCards.forEach(card => {
+              const target = parseInt(card.dataset.target);
+              if (!isNaN(target)) animateCount(card, target);
+            });
           }
         });
       }, { threshold: 0.3 });
-      statCards.forEach(c => statsObserver.observe(c));
+      if (statCards.length) statsObserver.observe(statCards[0]);
 
-      /* ---- IntersectionObserver: about feature list ---- */
+      /* ---- About feature list stagger (slide in from left) ---- */
       const aboutFeatures = document.querySelectorAll('.about-features li');
-      const featureObserver = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
+      const listObserver = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
           if (e.isIntersecting) {
-            setTimeout(() => e.target.classList.add('visible'), i * 120);
+            aboutFeatures.forEach((item, i) => {
+              setTimeout(() => item.classList.add('visible'), i * 100);
+            });
+            listObserver.disconnect();
           }
         });
-      }, { threshold: 0.3 });
-      aboutFeatures.forEach(f => featureObserver.observe(f));
-
-
+      }, { threshold: 0.2 });
+      if (aboutFeatures.length) listObserver.observe(aboutFeatures[0]);
 
     })();
   </script>

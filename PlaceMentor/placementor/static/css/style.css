@@ -1900,4 +1900,181 @@ img {
   .contact-grid-custom {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* ============================================
+   PLACEMENTOR ANIMATION SYSTEM
+   Scroll-reveal + hover glows (index.html only)
+   GPU-accelerated: only opacity + transform
+   ============================================ */
+
+/* --- Scroll Reveal Base --- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Slide-in from left (about text column) */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-32px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Slide-in from right (about visual card) */
+.reveal-right {
+  opacity: 0;
+  transform: translateX(32px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* --- Stagger Delays (for grid children) --- */
+.reveal-stagger .reveal:nth-child(1) { transition-delay: 0s; }
+.reveal-stagger .reveal:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger .reveal:nth-child(3) { transition-delay: 0.24s; }
+.reveal-stagger .reveal:nth-child(4) { transition-delay: 0.36s; }
+
+/* --- Feature Card: Enhanced Glow Hover --- */
+.feature-card {
+  box-shadow: 0 0 0 0 transparent;
+}
+
+.feature-card:hover {
+  box-shadow:
+    0 12px 40px rgba(13, 148, 136, 0.12),
+    0 0 0 1px rgba(13, 148, 136, 0.18);
+}
+
+/* --- Testimonial Card: Gold Glow on Hover --- */
+.testimonial-card:hover {
+  box-shadow:
+    0 8px 30px rgba(245, 166, 35, 0.1),
+    0 0 0 1px rgba(245, 166, 35, 0.15);
+}
+
+/* --- Stat Card: Glow Refinement --- */
+.stat-card:hover {
+  box-shadow:
+    0 16px 48px rgba(245, 166, 35, 0.12),
+    0 0 0 1px rgba(245, 166, 35, 0.2);
+}
+
+/* --- CTA Primary: Stronger Glow --- */
+.btn-cta-primary:hover {
+  box-shadow:
+    0 8px 32px rgba(245, 166, 35, 0.45),
+    0 0 0 1px rgba(245, 166, 35, 0.2);
+}
+
+/* --- Ghost Button: Teal Slide Fill on Hover --- */
+.btn-cta-ghost {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-cta-ghost::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(13, 148, 136, 0.06);
+  transform: translateX(-101%);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.btn-cta-ghost:hover::after {
+  transform: translateX(0);
+}
+
+/* --- Navbar: Enhanced Frosted Glass Scroll --- */
+.navbar {
+  transition:
+    background var(--transition-base),
+    padding var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.navbar.scrolled {
+  background: rgba(10, 14, 26, 0.95) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  box-shadow: 0 1px 0 rgba(245, 166, 35, 0.06),
+              0 4px 20px rgba(0, 0, 0, 0.4);
+  padding: 10px 0 !important;
+}
+
+/* --- Footer Links: Slide Underline --- */
+.footer-links a {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.footer-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--gold);
+  transition: width 0.3s ease;
+}
+
+.footer-links a:hover::after {
+  width: 100%;
+}
+
+/* --- Section Headers in Features / Testimonials: Fade in --- */
+.features-header,
+.testimonials-header {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.features-header.is-visible,
+.testimonials-header.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal-left,
+  .reveal-right,
+  .features-header,
+  .testimonials-header {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
